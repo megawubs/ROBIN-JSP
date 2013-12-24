@@ -18,14 +18,14 @@ robin_JSP = {
 		robin_JSP.abortLoading = false;
 		
 		// Hide for mobile
-		if(typeof robin_JSP_settings.showMobile != 'undefined') {	
+		if(typeof robin_JSP_settings.hideMobile != 'undefined') {	
 		
 			// Logging
 			if(robin_JSP_settings.logging == true) {
-				console.log('ROBIN: Setting "showMobile : '+robin_JSP_settings.showMobile+'" detected');
+				console.log('ROBIN: Setting "hideMobile : '+robin_JSP_settings.hideMobile+'" detected');
 			}		
 				
-			if(robin_JSP_settings.showMobile == false) {
+			if(robin_JSP_settings.hideMobile == true) {
 			
 				// Wait for callback before loading ROBIN
 				robin_JSP.holdLoading++;
@@ -56,14 +56,14 @@ robin_JSP = {
 		}
 		
 		// Hide when online/offline
-		if(typeof robin_JSP_settings.showOffline != 'undefined') {	
+		if(typeof robin_JSP_settings.hideOffline != 'undefined') {	
 		
 			// Logging
 			if(robin_JSP_settings.logging == true) {
-				console.log('ROBIN: Setting "showOffline : '+robin_JSP_settings.showOffline+'" detected');
+				console.log('ROBIN: Setting "hideOffline : '+robin_JSP_settings.hideOffline+'" detected');
 			}			
 			
-			if(robin_JSP_settings.showOffline == false) {
+			if(robin_JSP_settings.hideOffline == true) {
 			
 				// Wait for callback before loading ROBIN
 				robin_JSP.holdLoading++;
