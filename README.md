@@ -17,7 +17,7 @@ Use the following code to always show the ROBIN tab on your site, except when a 
 ```html
 <script type="text/javascript">
 var robin_JSP_settings = {
-  apikey      : '123456', // Set your API key
+  apikey      : '123456', // Set your API key (REQUIRED)
   hideMobile  : true,     // Hide the ROBIN tab on mobile devices
   hideOffline : false,    // Show the ROBIN tab even when you're offline
   customTop   : '30%'     // Adjust the vertical position of the ROBIN tab
@@ -28,7 +28,7 @@ var robin_JSP_settings = {
 
 ## Settings
 
-  * `apikey` - your [ROBIN apikey](http://robinhq.com/support/obtain-api-key/).
+  * `apikey` - your [ROBIN apikey](http://robinhq.com/support/obtain-api-key/) (REQUIRED).
   * `hideMobile` - true/false, hide/show the ROBIN tab on mobile devices.
   * `hideOffline` - true/false, hide/show the ROBIN tab when you're offline.
   * `customTop` - adjust the vertical position of the ROBIN tab on your site (including '%' or 'px').
