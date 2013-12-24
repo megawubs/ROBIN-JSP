@@ -1,7 +1,7 @@
 ROBIN-JSP
 =============
 
-Use **ROBIN-JSP** to set additional settings for the ROBIN tab on your site. [ROBIN](http://robinhq.com)is the all-in-one customer service solution. The ROBIN-JSP library is not officially supported (or developed) by ROBIN.
+Use **ROBIN-JSP** to set additional settings for the ROBIN tab on your site. [ROBIN](http://robinhq.com) is the all-in-one customer service solution. The ROBIN-JSP library is not officially supported (or developed) by ROBIN.
 
 ## Installation
 
