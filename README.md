@@ -13,7 +13,7 @@ With the example code shown below (don't forget to edit the settings to match yo
 
 ## Example
 
-Use the following code to always - even when you're offline for Live Chat - show the ROBIN tab on your site, except when a visitor uses a mobile device. The position of the contact tab is half way on the right side of your screen.
+Use the following code to always show the ROBIN tab on your site, except when a visitor uses a mobile device. The position of the contact tab is half way on the right side of your screen.
 ```html
 <script type="text/javascript">
 var robin_JSP_settings = {
