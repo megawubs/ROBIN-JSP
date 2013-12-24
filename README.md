@@ -17,10 +17,10 @@ Use the following code to always - even when you're offline for Live Chat - show
 ```html
 <script type="text/javascript">
 var robin_JSP_settings = {
-  apikey      : '123456',
-  showMobile  : false,
-  showOffline : true,
-  customTop   : '50%'
+  apikey      : '123456', // Set your API key
+  showMobile  : false,    // Hide the ROBIN tab on mobile devices
+  showOffline : true,     // Show the ROBIN tab when you're offline
+  customTop   : '30%'     // Adjust the vertical position of the ROBIN tab
 };
 </script>
 <script type="text/javascript" src="//raw.github.com/robinwo/ROBIN-JSP/master/js/robin-jsp.min.js"></script>
