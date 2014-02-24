@@ -1,28 +1,45 @@
 robin_JSP = {
 	Init: function() {
+		//create reverence to this
 		self = this;
 		self.settings = robin_JSP_settings;
-		delete robin_JSP_settings;
-		console.log(robin_JSP_settings);
+		//clear settings variable
+		robin_JSP_settings = {};
 		// Make sure settings are defined
 		if(typeof self.settings.apikey === 'undefined' || self.settings.apikey === '') {
-			self.log('ROBIN: Settings are required and missing')
+			self.log('Settings are required and missing')
 			return false;
 		}
 		
 		// Variables not to be defined by user
-		self.settings.apiurl = 'https://selfservice.robinhq.com';
+		self.settings.apiurl = 'https://selfservice-acc.robinhq.com';
 
 		// Variables to manage loading
 		self.holdLoading = 0;
 		self.abortLoading = false;
-		self.themes = ['test1', 'test2'];
+		self.themes = {
+			'portrait':{
+				base:'top: auto !important; bottom: 0px; height: 30px; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
+				left:'right: auto !important; left: 35px !important;',
+				right:'right: 35px !important; left: auto !important;'
+			},
+		 	'ribbon':{
+		 		base: 'top: auto !important; bottom: 102px; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 0px !important; border-top-left-radius: 0px !important; width: 221px !important;',
+		 		left:'right: auto !important; left: -40px !important; transform: rotate(40deg) !important; -webkit-transform: rotate(40deg) !important; -moz-transform: rotate(40deg) !important; -o-transform: rotate(40deg) !important; -ms-transform: rotate(40deg) !important;',
+		 		right:'right: -4px !important; left: auto !important; transform: rotate(-40deg) !important; -webkit-transform: rotate(-40deg) !important; -moz-transform: rotate(-40deg) !important; -o-transform: rotate(-40deg) !important; -ms-transform: rotate(-40deg) !important; bottom: 94px;'
+		 	},
+		 	'big-button':{
+		 		base:'',
+		 		left:'',
+		 		right:''
+		 	}
+		};
 		
 		// Hide for mobile
 		if(typeof self.settings.hideMobile != 'undefined') {	
 		
 			// Logging
-			self.log('ROBIN: Setting "hideMobile : '+self.settings.hideMobile+'" detected');
+			self.log('Setting "hideMobile : '+self.settings.hideMobile+'" detected');
 				
 			if(self.settings.hideMobile === true) {
 			
@@ -38,13 +55,13 @@ robin_JSP = {
 						// Mobile false, continue loading
 						
 						// Logging
-						self.log('ROBIN: Callback mobile is false, continue loading');
+						self.log('Callback mobile is false, continue loading');
 					} else {
 						// Mobile true, cancel loading
 						self.abortLoading = true;
 						
 						// Logging
-						self.log('ROBIN: Callback mobile is true, abort loading');
+						self.log('Callback mobile is true, abort loading');
 					}
 				});
 			}
@@ -54,7 +71,7 @@ robin_JSP = {
 		if(typeof self.settings.hideOffline != 'undefined') {	
 		
 			// Logging
-			self.log('ROBIN: Setting "hideOffline : '+self.settings.hideOffline+'" detected');
+			self.log('Setting "hideOffline : '+self.settings.hideOffline+'" detected');
 			
 			if(self.settings.hideOffline === true) {
 			
@@ -70,14 +87,14 @@ robin_JSP = {
 						// Online true, continue loading
 						
 						// Logging
-						self.log('ROBIN: Callback online is true, continue loading');
+						self.log('Callback online is true, continue loading');
 						
 					} else {
 						// Online false, cancel loading
 						self.abortLoading = true;
 						
 						// Logging
-						self.log('ROBIN: Callback online is false, abort loading');
+						self.log('Callback online is false, abort loading');
 					}
 				});
 			}
@@ -87,7 +104,7 @@ robin_JSP = {
 		if(typeof self.settings.customTop != 'undefined') {		
 			
 			// Logging
-			self.log('ROBIN: Setting "customTop : '+self.settings.customTop+'" detected');
+			self.log('Setting "customTop : '+self.settings.customTop+'" detected');
 
 			// Wait for callback before loading ROBIN
 			self.holdLoading++;
@@ -100,20 +117,19 @@ robin_JSP = {
 		}
 		
 		self.Load(function(response) {
-			// Logging
-			// if(self.settings.logging === true) {
 			if(response === true) {
-				self.log('ROBIN: Loading completed');
+				self.log('Loading completed');
 				//Apply template
 				self.applyTheme(self.settings.theme);
-			} else {
-				self.log('ROBIN: Loading aborted');
+			}
+			else {
+				self.log('Loading aborted');
 			}
 		});
 	},
 	log:function(string){
 		if(self.settings.logging){
-			console.log(string);
+			console.log('ROBIN: ' + string);
 		}
 	},
 	Load: function(callback) {
@@ -176,25 +192,27 @@ robin_JSP = {
 		head.appendChild(s);
 		callback();	
 	},
-	applyTheme: function(themeName, callback){
-		//check if the requested template exists
-		themeExists = function(themeName){
-			for(var i = 0; i < self.themes.length; i++){
-				if(self.themes[i] === themeName){
-					self.log(themeName);
-					return true;
-				}
-				else{
-					if(i === self.themes.length -1){
-						self.log('The theme "' + themeName + '" does not exists');
-						return false;
-					}
-				}
+	getTheme: function(themeName){
+		for(var theme in self.themes){
+			if(theme === themeName){
+				return self.themes[theme];
 			}
 		}
-		if(themeExists(themeName)){
-			var robinTab = document.getElementById('robin_tab');
-			console.log(robinTab);
+		return false;
+	},
+	applyTheme: function(themeName, callback){
+		var theme, position, cssString;
+		//check if the requested template exists
+		var theme = self.getTheme(themeName),
+			position = robin_settings.tab_position;
+		if(theme){
+			var cssString = "a#robin_tab {" + theme.base + theme[position] + '}' 
+			self.appendCSS(cssString, function(){
+				self.log('Theme "' + themeName + '" applied')
+			});
+		}
+		else{
+			self.log('The theme "' + themeName + '" does not exists');
 		}
 
 	}
