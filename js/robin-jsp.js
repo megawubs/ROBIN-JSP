@@ -12,13 +12,13 @@ robin_JSP = {
 		}
 		
 		// Variables not to be defined by user
-		self.settings.apiurl = 'https://selfservice-acc.robinhq.com';
+		self.settings.apiurl = '//selfservice.robinhq.com';
 
 		// Variables to manage loading
 		self.holdLoading = 0;
 		self.abortLoading = false;
 		self.themes = {
-			'portrait':{
+			'landscape':{
 				base:'top: auto !important; bottom: 0px; height: 30px; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
 				left:'right: auto !important; left: 35px !important;',
 				right:'right: 35px !important; left: auto !important;'
