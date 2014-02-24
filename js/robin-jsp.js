@@ -1,133 +1,127 @@
 robin_JSP = {
 	Init: function() {
-		
+		self = this;
+		self.settings = robin_JSP_settings;
+		delete robin_JSP_settings;
+		console.log(robin_JSP_settings);
 		// Make sure settings are defined
-		if(typeof robin_JSP_settings.apikey == 'undefined') {
-			// Logging
-			if(robin_JSP_settings.logging == true) {
-				console.log('ROBIN: Settings are required and missing');
-			}
+		if(typeof self.settings.apikey === 'undefined' || self.settings.apikey === '') {
+			self.log('ROBIN: Settings are required and missing')
 			return false;
 		}
 		
 		// Variables not to be defined by user
-		robin_JSP_settings.apiurl = '//selfservice.robinhq.com';
+		self.settings.apiurl = 'https://selfservice.robinhq.com';
 
 		// Variables to manage loading
-		robin_JSP.holdLoading = 0;
-		robin_JSP.abortLoading = false;
+		self.holdLoading = 0;
+		self.abortLoading = false;
+		self.themes = ['test1', 'test2'];
 		
 		// Hide for mobile
-		if(typeof robin_JSP_settings.hideMobile != 'undefined') {	
+		if(typeof self.settings.hideMobile != 'undefined') {	
 		
 			// Logging
-			if(robin_JSP_settings.logging == true) {
-				console.log('ROBIN: Setting "hideMobile : '+robin_JSP_settings.hideMobile+'" detected');
-			}		
+			self.log('ROBIN: Setting "hideMobile : '+self.settings.hideMobile+'" detected');
 				
-			if(robin_JSP_settings.hideMobile == true) {
+			if(self.settings.hideMobile === true) {
 			
 				// Wait for callback before loading ROBIN
-				robin_JSP.holdLoading++;
+				self.holdLoading++;
 				
-				robin_JSP.isMobile(function(response) {
+				self.isMobile(function(response) {
 					
 					// Callback received
-					robin_JSP.holdLoading--;
+					self.holdLoading--;
 
 					if(response != true) {
 						// Mobile false, continue loading
 						
 						// Logging
-						if(robin_JSP_settings.logging == true) {
-							console.log('ROBIN: Callback mobile is false, continue loading');
-						}						
+						self.log('ROBIN: Callback mobile is false, continue loading');
 					} else {
 						// Mobile true, cancel loading
-						robin_JSP.abortLoading = true;
+						self.abortLoading = true;
 						
 						// Logging
-						if(robin_JSP_settings.logging == true) {
-							console.log('ROBIN: Callback mobile is true, abort loading');
-						}					
+						self.log('ROBIN: Callback mobile is true, abort loading');
 					}
 				});
 			}
 		}
 		
 		// Hide when online/offline
-		if(typeof robin_JSP_settings.hideOffline != 'undefined') {	
+		if(typeof self.settings.hideOffline != 'undefined') {	
 		
 			// Logging
-			if(robin_JSP_settings.logging == true) {
-				console.log('ROBIN: Setting "hideOffline : '+robin_JSP_settings.hideOffline+'" detected');
-			}			
+			self.log('ROBIN: Setting "hideOffline : '+self.settings.hideOffline+'" detected');
 			
-			if(robin_JSP_settings.hideOffline == true) {
+			if(self.settings.hideOffline === true) {
 			
 				// Wait for callback before loading ROBIN
-				robin_JSP.holdLoading++;
+				self.holdLoading++;
 
-				robin_JSP.isOnline(function(response) {
+				self.isOnline(function(response) {
 				
 					// Callback received
-					robin_JSP.holdLoading--;
+					self.holdLoading--;
 				
-					if(response == true) {
+					if(response === true) {
 						// Online true, continue loading
 						
 						// Logging
-						if(robin_JSP_settings.logging == true) {
-							console.log('ROBIN: Callback online is true, continue loading');
-						}						
+						self.log('ROBIN: Callback online is true, continue loading');
+						
 					} else {
 						// Online false, cancel loading
-						robin_JSP.abortLoading = true;
+						self.abortLoading = true;
 						
 						// Logging
-						if(robin_JSP_settings.logging == true) {
-							console.log('ROBIN: Callback online is false, abort loading');
-						}																	
+						self.log('ROBIN: Callback online is false, abort loading');
 					}
 				});
-			}			
+			}
 		}
 		
 		// Hide when online/offline
-		if(typeof robin_JSP_settings.customTop != 'undefined') {		
+		if(typeof self.settings.customTop != 'undefined') {		
 			
 			// Logging
-			if(robin_JSP_settings.logging == true) {
-				console.log('ROBIN: Setting "customTop : '+robin_JSP_settings.customTop+'" detected');
-			}			
+			self.log('ROBIN: Setting "customTop : '+self.settings.customTop+'" detected');
 
 			// Wait for callback before loading ROBIN
-			robin_JSP.holdLoading++;
+			self.holdLoading++;
 
-			var css = 'a#robin_tab { top: '+robin_JSP_settings.customTop+' !important; }';
-			robin_JSP.appendCSS(css,function(response) {
+			var css = 'a#robin_tab { top: '+self.settings.customTop+' !important; }';
+			self.appendCSS(css,function(response) {
 				// Callback received
-				robin_JSP.holdLoading--;
+				self.holdLoading--;
 			});				
 		}
 		
-		robin_JSP.Load(function(response) {
+		self.Load(function(response) {
 			// Logging
-			if(robin_JSP_settings.logging == true) {
-				if(response == true) {
-					console.log('ROBIN: Loading completed');
-				} else {
-					console.log('ROBIN: Loading aborted');
-				}
+			// if(self.settings.logging === true) {
+			if(response === true) {
+				self.log('ROBIN: Loading completed');
+				//Apply template
+				self.applyTheme(self.settings.theme);
+			} else {
+				self.log('ROBIN: Loading aborted');
 			}
 		});
 	},
+	log:function(string){
+		if(self.settings.logging){
+			console.log(string);
+		}
+	},
 	Load: function(callback) {
-		if(robin_JSP.holdLoading == 0) {
-			if(robin_JSP.abortLoading !== true) {
+		if(self.holdLoading === 0) {
+			if(self.abortLoading !== true) {
 				// Load ROBIN
 				var script = document.createElement('script'),loaded;
-				script.setAttribute('src', robin_JSP_settings.apiurl+'/external/robin/'+robin_JSP_settings.apikey+'.js');
+				script.setAttribute('src', self.settings.apiurl+'/external/robin/'+self.settings.apikey+'.js');
 				script.setAttribute('async', 'async');
 				script.onreadystatechange = script.onload = function() { if (!loaded) { callback(true); } loaded = true; };
 				document.getElementsByTagName('body')[0].appendChild(script);
@@ -136,7 +130,7 @@ robin_JSP = {
 				callback(false);
 			}				
 		} else {
-			setTimeout(function(){robin_JSP.Load(function(response){callback(response);})},500);
+			setTimeout(function(){self.Load(function(response){callback(response);})},500);
 		}
 	},
 	API: function(service,callback) {
@@ -148,12 +142,12 @@ robin_JSP = {
 			request=new ActiveXObject('Microsoft.XMLHTTP');
 		}
 		request.onreadystatechange=function(){
-			if(request.readyState == 4 && request.status == 200){
+			if(request.readyState === 4 && request.status === 200){
 				var response = JSON.parse(request.responseText);
 				callback(response);
 			}
 		}
-		request.open('GET',robin_JSP_settings.apiurl+'/'+service,true);
+		request.open('GET',self.settings.apiurl+'/'+service,true);
 		request.send();	
 	},
 	isMobile: function(callback) {
@@ -163,8 +157,8 @@ robin_JSP = {
 	},
 	isOnline: function(callback) {
 		var check = false;
-		robin_JSP.API('presence/'+robin_JSP_settings.apikey+'/getstatus',function(response) {
-			if(response.Data.Status == 'online') {
+		self.API('presence/'+self.settings.apikey+'/getstatus',function(response) {
+			if(response.Data.Status === 'online') {
 				check = true;
 			}
 			callback(check);
@@ -181,6 +175,28 @@ robin_JSP = {
 		}
 		head.appendChild(s);
 		callback();	
+	},
+	applyTheme: function(themeName, callback){
+		//check if the requested template exists
+		themeExists = function(themeName){
+			for(var i = 0; i < self.themes.length; i++){
+				if(self.themes[i] === themeName){
+					self.log(themeName);
+					return true;
+				}
+				else{
+					if(i === self.themes.length -1){
+						self.log('The theme "' + themeName + '" does not exists');
+						return false;
+					}
+				}
+			}
+		}
+		if(themeExists(themeName)){
+			var robinTab = document.getElementById('robin_tab');
+			console.log(robinTab);
+		}
+
 	}
 }
 
