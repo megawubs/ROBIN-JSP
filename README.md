@@ -21,7 +21,7 @@ var robin_JSP_settings = {
   hideMobile  : true,     // Hide the ROBIN tab on mobile devices
   hideOffline : false,    // Show the ROBIN tab even when you're offline
   customTop   : '30%',     // Adjust the vertical position of the ROBIN tab
-  theme       : 'theme-name' //the theme of the tab, overwrites the customTop setting
+  theme       : 'theme-name' //the theme for the tab, overwrites the customTop setting
 };
 </script>
 <script type="text/javascript" src="//raw.github.com/megawubs/ROBIN-JSP/master/js/robin-jsp.min.js"></script>
