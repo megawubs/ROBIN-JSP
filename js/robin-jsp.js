@@ -17,21 +17,39 @@ robin_JSP = {
 		// Variables to manage loading
 		self.holdLoading = 0;
 		self.abortLoading = false;
+
+		//Button themes
 		self.themes = {
 			'landscape':{
-				base:'top: auto !important; bottom: 0px; height: 30px; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
-				left:'right: auto !important; left: 35px !important;',
-				right:'right: 35px !important; left: auto !important;'
+				left:{
+					a:'right: auto !important; left: 35px !important; top: auto !important; bottom: 0px; height: 30px; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
+					div:''
+				},
+				right:{
+					a:'right: 35px !important; left: auto !important; top: auto !important; bottom: 0px; height: 30px; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
+					div:''
+				}
 			},
 		 	'ribbon':{
-		 		base: 'top: auto !important; bottom: 102px; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 0px !important; border-top-left-radius: 0px !important; width: 221px !important;',
-		 		left:'right: auto !important; left: -40px !important; transform: rotate(40deg) !important; -webkit-transform: rotate(40deg) !important; -moz-transform: rotate(40deg) !important; -o-transform: rotate(40deg) !important; -ms-transform: rotate(40deg) !important;',
-		 		right:'right: -4px !important; left: auto !important; transform: rotate(-40deg) !important; -webkit-transform: rotate(-40deg) !important; -moz-transform: rotate(-40deg) !important; -o-transform: rotate(-40deg) !important; -ms-transform: rotate(-40deg) !important; bottom: 94px;'
+		 		left:{
+		 			a:'top: auto !important; right: auto !important; bottom: 102px; left: -40px !important; transform: rotate(40deg) !important; -webkit-transform: rotate(40deg) !important; -moz-transform: rotate(40deg) !important; -o-transform: rotate(40deg) !important; -ms-transform: rotate(40deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 0px !important; border-top-left-radius: 0px !important; width: 221px !important;',
+		 			div:'background-position: 24%, 0% !important;'
+		 		},
+		 		right:{
+		 			a:'top: auto !important; right: -4px !important; bottom: 94px; left: auto !important; transform: rotate(-40deg) !important; -webkit-transform: rotate(-40deg) !important; -moz-transform: rotate(-40deg) !important; -o-transform: rotate(-40deg) !important; -ms-transform: rotate(-40deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 0px; border-top-left-radius: 0px; width: 221px !important;',
+		 			div:'background-position: 24%, 0% !important;',
+		 		}
+		 		
 		 	},
 		 	'big-button':{
-		 		base:'',
-		 		left:'',
-		 		right:''
+		 		left:{
+		 			a:'top: auto !important; bottom: 30px; height: 30px; right:auto; left:35px !important; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-top-right-radius: 10px; border-top-left-radius: 10px; border-bottom-left-radius: 10px !important; border-bottom-right-radius: 10px !important;',
+		 			div:''
+		 		},
+		 		right:{
+		 			a:'top: auto !important; bottom: 30px; height: 30px; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-top-right-radius: 10px; border-top-left-radius: 10px; right: 35px !important;',
+		 			div:''
+		 		}
 		 	}
 		};
 		
@@ -146,7 +164,12 @@ robin_JSP = {
 				callback(false);
 			}				
 		} else {
-			setTimeout(function(){self.Load(function(response){callback(response);})},500);
+			setTimeout(function(){
+				self.Load(function(response)
+				{
+					callback(response);
+				}
+			)},500);
 		}
 	},
 	API: function(service,callback) {
@@ -206,7 +229,7 @@ robin_JSP = {
 		var theme = self.getTheme(themeName),
 			position = robin_settings.tab_position;
 		if(theme){
-			var cssString = "a#robin_tab {" + theme.base + theme[position] + '}' 
+			var cssString = 'a#robin_tab {' + theme[position].a + '} #robin_tab_div{ '+ theme[position].div + '}'; 
 			self.appendCSS(cssString, function(){
 				self.log('Theme "' + themeName + '" applied')
 			});
