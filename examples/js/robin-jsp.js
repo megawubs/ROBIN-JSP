@@ -250,8 +250,6 @@ robin_JSP = {
 			right = $('#robin_move_right');
 
 		robinDiv.append(popover);
-		var events = $._data(tab, "events");
-		console.log(events);
 		tab.click(function(){
 			$(this).animate({height:'530px'}, 500);
 		});
