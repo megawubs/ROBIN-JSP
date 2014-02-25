@@ -1,0 +1,6 @@
+source 'http://rubygems.org'
+gem 'guard-uglify', github: 'pferdefleisch/guard-uglify'
+gem 'activesupport'
+gem 'guard-concat'
+gem 'ruby_gntp'
+gem 'guard-copy'
