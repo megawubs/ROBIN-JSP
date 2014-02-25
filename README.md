@@ -20,10 +20,11 @@ var robin_JSP_settings = {
   apikey      : '123456', // Set your API key (REQUIRED)
   hideMobile  : true,     // Hide the ROBIN tab on mobile devices
   hideOffline : false,    // Show the ROBIN tab even when you're offline
-  customTop   : '30%'     // Adjust the vertical position of the ROBIN tab
+  customTop   : '30%',     // Adjust the vertical position of the ROBIN tab
+  theme       : 'theme-name' //the theme for the tab, overwrites the customTop setting
 };
 </script>
-<script type="text/javascript" src="//raw.github.com/robinwo/ROBIN-JSP/master/js/robin-jsp.min.js"></script>
+<script type="text/javascript" src="//raw.github.com/megawubs/ROBIN-JSP/master/js/robin-jsp.min.js"></script>
 ```
 
 ## Settings
@@ -33,3 +34,4 @@ var robin_JSP_settings = {
   * `hideOffline` - true/false, hide/show the ROBIN tab when you're offline.
   * `customTop` - adjust the vertical position of the ROBIN tab on your site (including '%' or 'px').
   * `logging` - true/false, enable/disable logging in the browser console
+  * `theme` - choose the layout of your robin button, currently you can choose `ribbon`, `landscape` and `big-button`. This setting will overwrite customTop
