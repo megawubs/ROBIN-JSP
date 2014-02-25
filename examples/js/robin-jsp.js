@@ -1,5 +1,5 @@
 robin_JSP = {
-	Init: function() {
+	Init: function(callbackDone, callbackFail) {
 		//create reverence to this
 		self = this;
 		self.settings = robin_JSP_settings;
@@ -22,11 +22,11 @@ robin_JSP = {
 		self.themes = {
 			'landscape':{
 				left:{
-					a:'right: auto !important; left: 35px !important; top: auto !important; bottom: 0px; height: 30px; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
+					a:'right: auto !important; left: 35px !important; top: auto !important; bottom: 0px; height: 24px !important; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
 					div:''
 				},
 				right:{
-					a:'right: 35px !important; left: auto !important; top: auto !important; bottom: 0px; height: 30px; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
+					a:'right: 35px !important; left: auto !important; top: auto !important; bottom: 0px; height: 24px !important; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
 					div:''
 				}
 			},
@@ -137,8 +137,11 @@ robin_JSP = {
 		self.Load(function(response) {
 			if(response === true) {
 				self.log('Loading completed');
-				//Apply template
+
+				//apply the theme
 				self.applyTheme(self.settings.theme);
+
+				self.popup();
 			}
 			else {
 				self.log('Loading aborted');
@@ -237,8 +240,22 @@ robin_JSP = {
 		else{
 			self.log('The theme "' + themeName + '" does not exists');
 		}
+	},
+	popup:function(){
+		var popover = $('#robin_popover'),
+			tab = $('#robin_tab'),
+			buttons = $('#robin_close'),
+			robinDiv = $('#robin_tab_div'),
+			left = $('#robin_move_left'),
+			right = $('#robin_move_right');
+
+		robinDiv.append(popover);
+		var events = $._data(tab, "events");
+		console.log(events);
+		tab.click(function(){
+			$(this).animate({height:'530px'}, 500);
+		});
 
 	}
 }
-
 robin_JSP.Init();
