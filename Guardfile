@@ -8,6 +8,6 @@ guard :copy, :from => 'js', :to => 'examples/js' do
 	watch('js/robin-jsp.min.js')
 end
 
-guard :copy, :from => 'js', :to => '/Volumes/Extra HDD/Dropboxes/Bram/Dropbox/projects/js/jsdelivr/files/robinjsp', :absolute => true do
+guard :copy, :from => 'js', :to => '/Volumes/Extra HDD/Dropboxes/Bram/Dropbox/projects/js/jsdelivr/files/robinjsp/0.0.1', :absolute => true do
 	watch('js/robin-jsp.min.js')
 end
