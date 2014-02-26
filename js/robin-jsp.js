@@ -1,8 +1,17 @@
 robin_JSP = {
-	Init: function(callbackDone, callbackFail) {
+	init: function() {
 		//create reverence to this
 		self = this;
-		self.settings = robin_JSP_settings;
+		self.settings = {
+			apikey:'',
+			hideMobile  : true,  // Hide the ROBIN tab on mobile devices
+			hideOffline : false, // Show the ROBIN tab even when you're offline
+			logging     : false, //enable or disable logging
+			theme       : '', //the theme of the tab
+			customTop   : false,
+			popup		: false //use a popup instead of the robin tab
+		}
+		$.extend(self.settings, robin_JSP_settings);
 		//clear settings variable
 		robin_JSP_settings = {};
 		// Make sure settings are defined
@@ -10,116 +19,67 @@ robin_JSP = {
 			self.log('Settings are required and missing')
 			return false;
 		}
-		
 		// Variables not to be defined by user
 		self.settings.apiurl = '//selfservice.robinhq.com';
 
 		// Variables to manage loading
 		self.holdLoading = 0;
 		self.abortLoading = false;
+		
 
-		//Button themes
-		self.themes = {
-			'landscape':{
-				left:{
-					a:'right: auto !important; left: 35px !important; top: auto !important; bottom: 0px; height: 24px !important; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
-					div:''
-				},
-				right:{
-					a:'right: 35px !important; left: auto !important; top: auto !important; bottom: 0px; height: 24px !important; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
-					div:''
-				}
-			},
-		 	'ribbon':{
-		 		left:{
-		 			a:'top: auto !important; right: auto !important; bottom: 102px; left: -40px !important; transform: rotate(40deg) !important; -webkit-transform: rotate(40deg) !important; -moz-transform: rotate(40deg) !important; -o-transform: rotate(40deg) !important; -ms-transform: rotate(40deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 0px !important; border-top-left-radius: 0px !important; width: 221px !important;',
-		 			div:'background-position: 24%, 0% !important;'
-		 		},
-		 		right:{
-		 			a:'top: auto !important; right: -4px !important; bottom: 94px; left: auto !important; transform: rotate(-40deg) !important; -webkit-transform: rotate(-40deg) !important; -moz-transform: rotate(-40deg) !important; -o-transform: rotate(-40deg) !important; -ms-transform: rotate(-40deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 0px; border-top-left-radius: 0px; width: 221px !important;',
-		 			div:'background-position: 24%, 0% !important;',
-		 		}
-		 		
-		 	},
-		 	'big-button':{
-		 		left:{
-		 			a:'top: auto !important; bottom: 30px; height: 30px; right:auto; left:35px !important; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-top-right-radius: 10px; border-top-left-radius: 10px; border-bottom-left-radius: 10px !important; border-bottom-right-radius: 10px !important;',
-		 			div:''
-		 		},
-		 		right:{
-		 			a:'top: auto !important; bottom: 30px; height: 30px; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-top-right-radius: 10px; border-top-left-radius: 10px; right: 35px !important;',
-		 			div:''
-		 		}
-		 	}
-		};
-		
-		// Hide for mobile
-		if(typeof self.settings.hideMobile != 'undefined') {	
-		
-			// Logging
+		if(self.settings.hideMobile === true) {
 			self.log('Setting "hideMobile : '+self.settings.hideMobile+'" detected');
-				
-			if(self.settings.hideMobile === true) {
+			// Wait for callback before loading ROBIN
+			self.holdLoading++;
 			
-				// Wait for callback before loading ROBIN
-				self.holdLoading++;
+			self.isMobile(function(response) {
 				
-				self.isMobile(function(response) {
+				// Callback received
+				self.holdLoading--;
+
+				if(response != true) {
+					// Mobile false, continue loading
 					
-					// Callback received
-					self.holdLoading--;
-
-					if(response != true) {
-						// Mobile false, continue loading
-						
-						// Logging
-						self.log('Callback mobile is false, continue loading');
-					} else {
-						// Mobile true, cancel loading
-						self.abortLoading = true;
-						
-						// Logging
-						self.log('Callback mobile is true, abort loading');
-					}
-				});
-			}
+					// Logging
+					self.log('Callback mobile is false, continue loading');
+				} else {
+					// Mobile true, cancel loading
+					self.abortLoading = true;
+					
+					// Logging
+					self.log('Callback mobile is true, abort loading');
+				}
+			});
 		}
-		
-		// Hide when online/offline
-		if(typeof self.settings.hideOffline != 'undefined') {	
-		
-			// Logging
+		if(self.settings.hideOffline === true) {
+			//logging
 			self.log('Setting "hideOffline : '+self.settings.hideOffline+'" detected');
-			
-			if(self.settings.hideOffline === true) {
-			
-				// Wait for callback before loading ROBIN
-				self.holdLoading++;
+			// Wait for callback before loading ROBIN
+			self.holdLoading++;
 
-				self.isOnline(function(response) {
-				
-					// Callback received
-					self.holdLoading--;
-				
-					if(response === true) {
-						// Online true, continue loading
-						
-						// Logging
-						self.log('Callback online is true, continue loading');
-						
-					} else {
-						// Online false, cancel loading
-						self.abortLoading = true;
-						
-						// Logging
-						self.log('Callback online is false, abort loading');
-					}
-				});
-			}
+			self.isOnline(function(response) {
+			
+				// Callback received
+				self.holdLoading--;
+			
+				if(response === true) {
+					// Online true, continue loading
+					
+					// Logging
+					self.log('Callback online is true, continue loading');
+					
+				} else {
+					// Online false, cancel loading
+					self.abortLoading = true;
+					
+					// Logging
+					self.log('Callback online is false, abort loading');
+				}
+			});
 		}
 		
 		// Hide when online/offline
-		if(typeof self.settings.customTop != 'undefined') {		
+		if(self.settings.customTop !== false) {
 			
 			// Logging
 			self.log('Setting "customTop : '+self.settings.customTop+'" detected');
@@ -131,29 +91,69 @@ robin_JSP = {
 			self.appendCSS(css,function(response) {
 				// Callback received
 				self.holdLoading--;
-			});				
+			});
+		}
+		if(self.settings.popup){
+			self.log('Setting "popup: ' + self.settings.popup +'" detected');
+			self.loadPopup();
+		}
+		else{
+			self.load(function(response) {
+				if(response === true) {
+					self.log('Loading completed');
+					if(self.settings.theme !== false){
+						self.log('Setting "theme: ' + self.settings.theme + '" detected');
+						//apply the theme
+						self.applyTheme(self.settings.theme);
+					}
+				}
+				else {
+					self.log('Loading aborted');
+				}
+			});
 		}
 		
-		self.Load(function(response) {
-			if(response === true) {
-				self.log('Loading completed');
-
-				//apply the theme
-				self.applyTheme(self.settings.theme);
-
-				self.popup();
+	},
+	//Button themes
+	themes: {
+		'landscape':{
+			left:{
+				a:'right: auto !important; left: 35px !important; top: auto !important; bottom: 0px; height: 24px !important; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
+				div:''
+			},
+			right:{
+				a:'right: 35px !important; left: auto !important; top: auto !important; bottom: 0px; height: 24px !important; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 10px; border-top-left-radius: 10px;',
+				div:''
 			}
-			else {
-				self.log('Loading aborted');
-			}
-		});
+		},
+	 	'ribbon':{
+	 		left:{
+	 			a:'top: auto !important; right: auto !important; bottom: 102px; left: -40px !important; transform: rotate(40deg) !important; -webkit-transform: rotate(40deg) !important; -moz-transform: rotate(40deg) !important; -o-transform: rotate(40deg) !important; -ms-transform: rotate(40deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 0px !important; border-top-left-radius: 0px !important; width: 221px !important;',
+	 			div:'background-position: 24%, 0% !important;'
+	 		},
+	 		right:{
+	 			a:'top: auto !important; right: -4px !important; bottom: 94px; left: auto !important; transform: rotate(-40deg) !important; -webkit-transform: rotate(-40deg) !important; -moz-transform: rotate(-40deg) !important; -o-transform: rotate(-40deg) !important; -ms-transform: rotate(-40deg) !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important; border-top-right-radius: 0px; border-top-left-radius: 0px; width: 221px !important;',
+	 			div:'background-position: 24%, 0% !important;',
+	 		}
+	 		
+	 	},
+	 	'big-button':{
+	 		left:{
+	 			a:'top: auto !important; bottom: 30px; height: 30px; right:auto; left:35px !important; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-top-right-radius: 10px; border-top-left-radius: 10px; border-bottom-left-radius: 10px !important; border-bottom-right-radius: 10px !important;',
+	 			div:''
+	 		},
+	 		right:{
+	 			a:'top: auto !important; bottom: 30px; height: 30px; transform: rotate(0deg) !important; -webkit-transform: rotate(0deg) !important; -moz-transform: rotate(0deg) !important; -o-transform: rotate(0deg) !important; -ms-transform: rotate(0deg) !important; border-top-right-radius: 10px; border-top-left-radius: 10px; right: 35px !important;',
+	 			div:''
+	 		}
+	 	}
 	},
 	log:function(string){
 		if(self.settings.logging){
 			console.log('ROBIN: ' + string);
 		}
 	},
-	Load: function(callback) {
+	load: function(callback) {
 		if(self.holdLoading === 0) {
 			if(self.abortLoading !== true) {
 				// Load ROBIN
@@ -176,6 +176,7 @@ robin_JSP = {
 		}
 	},
 	API: function(service,callback) {
+		self.log('requesting: ' + service);
 		var request;
 		if(window.XMLHttpRequest){
 			request=new XMLHttpRequest;
@@ -241,19 +242,94 @@ robin_JSP = {
 			self.log('The theme "' + themeName + '" does not exists');
 		}
 	},
-	popup:function(){
-		var popover = $('#robin_popover'),
-			tab = $('#robin_tab'),
-			buttons = $('#robin_close'),
-			robinDiv = $('#robin_tab_div'),
-			left = $('#robin_move_left'),
-			right = $('#robin_move_right');
+	loadPopup:function(){
+		self.log('loading popup');
+		var bottom = 480,
+			animationDuration = 600,
+			robinTabClick = function(event){
+				event.preventDefault();
+				if($(this).css('bottom') === '0px'){
+					$(this).animate({bottom:bottom}, animationDuration);
+				}
+				else{
+					$(this).animate({bottom:0}, animationDuration);
+				}
+			},
 
-		robinDiv.append(popover);
-		tab.click(function(){
-			$(this).animate({height:'530px'}, 500);
-		});
+			robinTab = $('<section/>').css({
+				mozBoxSizing: 'content-box',
+				msBoxSizing: 'content-box',
+				boxSizing: 'content-box',
+				borderImage: 'none',
+				borderStyle: 'solid solid none',
+				borderWidth: '0px 0px 0px 1px',
+				position: 'fixed',
+				cursor: 'pointer',
+				display: 'block',
+				textDecoration: 'none',
+				height: '24px',
+				padding: '10px 0 7px 0',
+				zIndex: 100000,
+				top: 'auto',
+				bottom: 0,
+				left: '20px',
+				width: '327px',
+				background:'-moz-linear-gradient(left, rgba(75,185,255,1) 0%, rgba(36,125,218,1) 65%, rgba(22,102,185,1) 100%)',
+				background: '-o-linear-gradient(left, rgba(75,185,255,1) 0%,rgba(36,125,218,1) 65%,rgba(22,102,185,1) 100%)',
+				background: '-ms-linear-gradient(left, rgba(75,185,255,1) 0%,rgba(36,125,218,1) 65%,rgba(22,102,185,1) 100%)',
+				background: 'linear-gradient(to right, rgba(75,185,255,1) 0%,rgba(36,125,218,1) 65%,rgba(22,102,185,1) 100%)',
+				filter: 'progid:DXImageTransform.Microsoft.gradient( startColorstr="#4bb9ff", endColorstr="#1666b9",GradientType=0)',
+				borderColor: '#83edff'
+			}).click(robinTabClick).appendTo('body'),
 
+			header = $('<header/>').css({
+				fontFamily: "Helvetica, arial,sans-serif",
+				fontSize: "14px",
+				fontWeight: "bold",
+				lineHeight: 1.6,
+				paddingLeft: "25px",
+				marginRight: "25px",
+				textAlign: "left",
+				textTransform: "uppercase",
+				textDecoration: "none",
+				top: 0,
+				verticalAlign: "middle",
+				width: "auto",
+				mozBoxSizing:"content-box",
+				msBoxSizing:"content-box",
+				boxSizing: "content-box",
+				webkitTouchCallout: "none",
+				webkitUserSelect: "none",
+				khtmlUserSelect: "none",
+				mozUserSelect: "none",
+				msUserSelect: "none",
+				userSelect: "none",
+				color: "#E8E8E8",
+				textShadow: "1px 1px 1px #404040",
+			}).appendTo(robinTab),
+
+			title = $('<div/>').html('Contact').appendTo(header);
+
+			frameUrl = self.settings.apiurl + '/apikey/' + self.settings.apikey,
+
+			robinWrapper = $('<div/>').css({
+				width:324,
+				height:470,
+				borderWidth:0,
+				position:'relative',
+				top:9,
+				borderImage: "none",
+				borderStyle: "solid solid none",
+				borderWidth: "0px .07em 0px .07em",
+				borderColor: "#e8e8e8"
+			}).appendTo(robinTab);
+
+			robinFrame = $("<iframe>")
+			.attr('src', frameUrl).css({
+				width:"100%",
+				height:"100%"
+			}).attr('frameborder', 'no')
+			.attr('allowtransparency', 'true').appendTo(robinWrapper);
 	}
 }
-robin_JSP.Init();
+robin_JSP.init();
