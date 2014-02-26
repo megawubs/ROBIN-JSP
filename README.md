@@ -24,8 +24,8 @@ var robin_JSP_settings = {
   theme       : 'theme-name' //the theme for the tab, overwrites the customTop setting
 };
 </script>
-<!-- make sure to upload the robin-jsp.min.js to your your web server, and point the src of the script tag to its location -->
-<script type="text/javascript" src="/js/robin-jsp.min.js"></script> 
+<!-- this script tag will always load the latest version of robin-jsp -->
+<script type="text/javascript" src="http://cdn.jsdelivr.net/robinjsp/latest/robin-jsp.min.js" async="async"></script> 
 
 ```
 
