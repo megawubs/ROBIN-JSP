@@ -7,7 +7,7 @@ robin_JSP = {
 			hideMobile  : true,  // Hide the ROBIN tab on mobile devices
 			hideOffline : false, // Show the ROBIN tab even when you're offline
 			logging     : false, //enable or disable logging
-			theme       : '', //the theme of the tab
+			theme       : false, //the theme of the tab
 			customTop   : false,
 			popup		: false //use a popup instead of the robin tab
 		}
@@ -25,6 +25,18 @@ robin_JSP = {
 		// Variables to manage loading
 		self.holdLoading = 0;
 		self.abortLoading = false;
+		
+		//variable to manage elements
+		self.elementsList = {};
+		self.querys = {};
+		self.settings.frameUrl = function(){
+			var url = self.settings.apiurl + '/apikey/' + self.settings.apikey;
+			if(self.urlHasRobinConversationID()){
+				url += '/' + self.querys.rbn_cnv;
+			}
+			return url;
+		}
+
 		
 
 		if(self.settings.hideMobile === true) {
@@ -93,7 +105,7 @@ robin_JSP = {
 				self.holdLoading--;
 			});
 		}
-		if(self.settings.popup){
+		if(typeof self.settings.popup === "object"){
 			self.log('Setting "popup: ' + self.settings.popup +'" detected');
 			self.loadPopup();
 		}
@@ -112,7 +124,6 @@ robin_JSP = {
 				}
 			});
 		}
-		
 	},
 	//Button themes
 	themes: {
@@ -172,11 +183,12 @@ robin_JSP = {
 				{
 					callback(response);
 				}
-			)},500);
+			)}, 500);
 		}
 	},
 	API: function(service,callback) {
-		self.log('requesting: ' + service);
+		var url = self.settings.apiurl +'/' + service
+		self.log('requesting: ' + url);
 		var request;
 		if(window.XMLHttpRequest){
 			request=new XMLHttpRequest;
@@ -190,7 +202,7 @@ robin_JSP = {
 				callback(response);
 			}
 		}
-		request.open('GET',self.settings.apiurl+'/'+service,true);
+		request.open('GET', url, true);
 		request.send();	
 	},
 	isMobile: function(callback) {
@@ -204,9 +216,11 @@ robin_JSP = {
 			if(response.Data.Status === 'online') {
 				check = true;
 			}
+			self.onlineStatus = check;
 			callback(check);
 		});
 	},
+	onlineStatus:false,
 	appendCSS: function(css,callback) {
 		var head = document.getElementsByTagName('head')[0];
 		var s = document.createElement('style');
@@ -246,90 +260,183 @@ robin_JSP = {
 		self.log('loading popup');
 		var bottom = 480,
 			animationDuration = 600,
+			bodyClick = function(event){
+				var $target = $(event.target);
+				if ($target.parents('#robinTab').length == 0) {
+					self.elementsList.robinTab.animate({bottom:0}, animationDuration);
+				}
+				event.stopPropagation();
+			},
+
 			robinTabClick = function(event){
 				event.preventDefault();
 				if($(this).css('bottom') === '0px'){
-					$(this).animate({bottom:bottom}, animationDuration);
+					$(this).animate({bottom:bottom}, animationDuration, function(){
+						$('body').one('click', bodyClick);
+					})
+					
 				}
 				else{
 					$(this).animate({bottom:0}, animationDuration);
 				}
-			},
+			};
 
-			robinTab = $('<section/>').css({
-				mozBoxSizing: 'content-box',
-				msBoxSizing: 'content-box',
-				boxSizing: 'content-box',
-				borderImage: 'none',
-				borderStyle: 'solid solid none',
-				borderWidth: '0px 0px 0px 1px',
-				position: 'fixed',
-				cursor: 'pointer',
-				display: 'block',
-				textDecoration: 'none',
-				height: '24px',
-				padding: '10px 0 7px 0',
-				zIndex: 100000,
-				top: 'auto',
-				bottom: 0,
-				left: '20px',
-				width: '327px',
-				background:'-moz-linear-gradient(left, rgba(75,185,255,1) 0%, rgba(36,125,218,1) 65%, rgba(22,102,185,1) 100%)',
-				background: '-o-linear-gradient(left, rgba(75,185,255,1) 0%,rgba(36,125,218,1) 65%,rgba(22,102,185,1) 100%)',
-				background: '-ms-linear-gradient(left, rgba(75,185,255,1) 0%,rgba(36,125,218,1) 65%,rgba(22,102,185,1) 100%)',
-				background: 'linear-gradient(to right, rgba(75,185,255,1) 0%,rgba(36,125,218,1) 65%,rgba(22,102,185,1) 100%)',
-				filter: 'progid:DXImageTransform.Microsoft.gradient( startColorstr="#4bb9ff", endColorstr="#1666b9",GradientType=0)',
-				borderColor: '#83edff'
-			}).click(robinTabClick).appendTo('body'),
+		self.elementsList.robinTab = $('<section id="robinTab"/>').css({
+			mozBoxSizing: 'content-box',
+			msBoxSizing: 'content-box',
+			boxSizing: 'content-box',
+			borderImage: 'none',
+			borderStyle: 'solid solid none',
+			borderWidth: '0px 0px 0px 1px',
+			position: 'fixed',
+			cursor: 'pointer',
+			display: 'block',
+			textDecoration: 'none',
+			height: '24px',
+			padding: '10px 0 7px 0',
+			zIndex: 100000,
+			top: 'auto',
+			bottom: 0,
+			left: '20px',
+			width: '327px',
+			background:'-moz-linear-gradient(left, rgba(75,185,255,1) 0%, rgba(36,125,218,1) 65%, rgba(22,102,185,1) 100%)',
+			background: '-o-linear-gradient(left, rgba(75,185,255,1) 0%,rgba(36,125,218,1) 65%,rgba(22,102,185,1) 100%)',
+			background: '-ms-linear-gradient(left, rgba(75,185,255,1) 0%,rgba(36,125,218,1) 65%,rgba(22,102,185,1) 100%)',
+			background: 'linear-gradient(to right, rgba(75,185,255,1) 0%,rgba(36,125,218,1) 65%,rgba(22,102,185,1) 100%)',
+			filter: 'progid:DXImageTransform.Microsoft.gradient( startColorstr="#4bb9ff", endColorstr="#1666b9",GradientType=0)',
+			borderColor: '#83edff'
+		}).click(robinTabClick).appendTo('body').bind('clickoutside', function(event){
+			$(this).animate({bottom:0}, animationDuration);
+		});
 
-			header = $('<header/>').css({
-				fontFamily: "Helvetica, arial,sans-serif",
-				fontSize: "14px",
-				fontWeight: "bold",
-				lineHeight: 1.6,
-				paddingLeft: "25px",
-				marginRight: "25px",
-				textAlign: "left",
-				textTransform: "uppercase",
-				textDecoration: "none",
-				top: 0,
-				verticalAlign: "middle",
-				width: "auto",
-				mozBoxSizing:"content-box",
-				msBoxSizing:"content-box",
-				boxSizing: "content-box",
-				webkitTouchCallout: "none",
-				webkitUserSelect: "none",
-				khtmlUserSelect: "none",
-				mozUserSelect: "none",
-				msUserSelect: "none",
-				userSelect: "none",
-				color: "#E8E8E8",
-				textShadow: "1px 1px 1px #404040",
-			}).appendTo(robinTab),
 
-			title = $('<div/>').html('Contact').appendTo(header);
+		self.elementsList.header = $('<header/>').css({
+			fontFamily: "Helvetica, arial,sans-serif",
+			fontSize: "14px",
+			fontWeight: "bold",
+			lineHeight: 1.6,
+			paddingLeft: "25px",
+			marginRight: "25px",
+			textAlign: "left",
+			textTransform: "uppercase",
+			textDecoration: "none",
+			top: 0,
+			verticalAlign: "middle",
+			width: "auto",
+			mozBoxSizing:"content-box",
+			msBoxSizing:"content-box",
+			boxSizing: "content-box",
+			webkitTouchCallout: "none",
+			webkitUserSelect: "none",
+			khtmlUserSelect: "none",
+			mozUserSelect: "none",
+			msUserSelect: "none",
+			userSelect: "none",
+			color: "#E8E8E8",
+			textShadow: "1px 1px 1px #404040",
+		}).appendTo(self.elementsList.robinTab);
 
-			frameUrl = self.settings.apiurl + '/apikey/' + self.settings.apikey,
+		var title = $('<div/>').html('Contact').appendTo(self.elementsList.header);
 
-			robinWrapper = $('<div/>').css({
-				width:324,
-				height:470,
-				borderWidth:0,
-				position:'relative',
-				top:9,
-				borderImage: "none",
-				borderStyle: "solid solid none",
-				borderWidth: "0px .07em 0px .07em",
-				borderColor: "#e8e8e8"
-			}).appendTo(robinTab);
+		self.elementsList.robinWrapper = $('<div/>').css({
+			width:324,
+			height:470,
+			borderWidth:0,
+			position:'relative',
+			top:9,
+			borderImage: "none",
+			borderStyle: "solid solid none",
+			borderWidth: "0px .07em 0px .07em",
+			borderColor: "#e8e8e8"
+		}).appendTo(self.elementsList.robinTab);
 
-			robinFrame = $("<iframe>")
-			.attr('src', frameUrl).css({
-				width:"100%",
-				height:"100%"
-			}).attr('frameborder', 'no')
-			.attr('allowtransparency', 'true').appendTo(robinWrapper);
+		self.elementsList.robinFrame = $("<iframe>")
+		.attr('src', self.settings.frameUrl()).css({
+			width:"100%",
+			height:"100%"
+		}).attr('frameborder', 'no')
+		.attr('allowtransparency', 'true').appendTo(self.elementsList.robinWrapper);
+
+		self.startLoop(function(){
+			var previousStatus = self.onlineStatus;
+			self.log(previousStatus);
+			self.log(self.onlineStatus);
+			self.log("Checking if you are online...")
+			self.isOnline(function(isOnline){
+				if(isOnline){
+					self.log(self.onlineStatus);
+					self.log("You are online!");
+					self.setOnline(previousStatus);
+				}
+				else{
+					self.log("You are offline!");
+					self.setOffline(previousStatus);
+				}
+			});
+		});
+	},
+	setOnline:function(previousStatus){
+		if(previousStatus === false && self.onlineStatus === true){
+			self.log("Setting widget to online state");
+			self.elementsList.header.css({
+				background: "url(http://selfservice.robinhq.com/external/assets/online_indicator.png) no-repeat",
+				marginLeft: 13,
+				paddingLeft: 35
+			});
+			self.elementsList.robinFrame.attr('src', function(i, val){return val});
+		}
+		
+	},
+	setOffline:function(previousStatus){
+		if(previousStatus === true && self.onlineStatus === false){
+			self.log("Setting widget to offline state");
+			self.elementsList.header.css({
+				background:'none',
+				paddingLeft:25
+			});
+			self.elementsList.robinFrame.attr('src', function(i, val){return val});
+		}
+	},
+
+	getQueryStrings: function () {
+		var queryStrings = {},
+			query = window.location.search.substring(1),
+			vars = query.split("&");
+
+		for (var i=0;i<vars.length;i++) {
+			var pair = vars[i].split("=");
+			if (typeof queryStrings[pair[0]] === "undefined") {
+				queryStrings[pair[0]] = pair[1];
+			}
+			else if (typeof queryStrings[pair[0]] === "string") {
+				var arr = [ queryStrings[pair[0]], pair[1] ];
+				queryStrings[pair[0]] = arr;
+			}
+			else {
+				queryStrings[pair[0]].push(pair[1]);
+			}
+		}
+		return queryStrings;
+	},
+
+	urlHasRobinConversationID:function(){
+		var querys = self.getQueryStrings();
+		if(typeof querys.rbn_cnv !== 'undefined'){
+			self.log('Found Robin query string');
+			self.querys = querys;
+		}
+		else{
+			self.log('No robin query string found.');
+			return false;
+		}
+		return true;
+	},
+	startLoop:function(loop){
+		var repeat = function(){
+			loop();
+			setTimeout(repeat, 18000);
+		}
+		repeat();
 	}
 }
 robin_JSP.init();
