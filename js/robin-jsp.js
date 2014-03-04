@@ -21,7 +21,8 @@ robin_JSP = {
 		}
 		// Variables not to be defined by user
 		self.settings.apiurl = '//selfservice-acc.robinhq.com';
-
+		self.settings.tabClosedBottom = 480,
+			self.settings.animationDuration = 600;
 		// Variables to manage loading
 		self.holdLoading = 0;
 		self.abortLoading = false;
@@ -107,7 +108,12 @@ robin_JSP = {
 		}
 		if(typeof self.settings.popup === "object"){
 			self.log('Setting "popup: ' + self.settings.popup +'" detected');
-			self.loadPopup();
+			self.loadPopup().done(function(){
+				if(self.urlHasRobinConversationID()){
+					console.log('blaaaat?');
+					self.openTab();
+				}
+			});
 		}
 		else{
 			self.load(function(response) {
@@ -258,10 +264,9 @@ robin_JSP = {
 	},
 	loadPopup:function(){
 		self.log('loading popup');
-		var bottom = 480,
-			animationDuration = 600;
+		var dfd = new $.Deferred();
 
-		self.elementsList.robinTab = self.createRobinTab(bottom, animationDuration)
+		self.elementsList.robinTab = self.createRobinTab()
 		.appendTo('body');
 
 		self.elementsList.header = self.createHeader()
@@ -293,16 +298,18 @@ robin_JSP = {
 				}
 			});
 		});
+		dfd.resolve();
+		return dfd.promise();
 	},
-	createRobinTab:function(bottom, animationDuration){
+	createRobinTab:function(){
 		var robinTabClick = function(event){
 			event.preventDefault();
 			if($(this).css('bottom') === '0px'){
-				self.openTab(bottom, animationDuration);
+				self.openTab();
 				
 			}
 			else{
-				self.closeTab(animationDuration);
+				self.closeTab();
 			}
 		};
 
@@ -380,7 +387,7 @@ robin_JSP = {
 		}).attr('frameborder', 'no')
 		.attr('allowtransparency', 'true');
 	},
-	openTab:function(bottom, animationDuration){
+	openTab:function(){
 		var bodyClick = function(event){
 			var $target = $(event.target);
 			if ($target.parents('#robinTab').length == 0) {
@@ -389,13 +396,13 @@ robin_JSP = {
 			event.stopPropagation();
 		};
 
-		self.elementsList.robinTab.animate({bottom:bottom}, animationDuration, function(){
+		self.elementsList.robinTab.animate({bottom:self.settings.tabClosedBottom}, self.settings.animationDuration, function(){
 			//this is event can only be fired once when the tab is opened
 			$('body').one('click', bodyClick);
 		});
 	},
-	closeTab:function(animationDuration){
-		self.elementsList.robinTab.animate({bottom:0}, animationDuration);
+	closeTab:function(){
+		self.elementsList.robinTab.animate({bottom:0}, self.settings.animationDuration);
 	},
 	setOnline:function(previousStatus){
 		if(previousStatus === false && self.onlineStatus === true){
