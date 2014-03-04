@@ -20,7 +20,7 @@ robin_JSP = {
 			return false;
 		}
 		// Variables not to be defined by user
-		self.settings.apiurl = '//selfservice.robinhq.com';
+		self.settings.apiurl = '//selfservice-acc.robinhq.com';
 
 		// Variables to manage loading
 		self.holdLoading = 0;
@@ -259,29 +259,54 @@ robin_JSP = {
 	loadPopup:function(){
 		self.log('loading popup');
 		var bottom = 480,
-			animationDuration = 600,
-			bodyClick = function(event){
-				var $target = $(event.target);
-				if ($target.parents('#robinTab').length == 0) {
-					self.elementsList.robinTab.animate({bottom:0}, animationDuration);
-				}
-				event.stopPropagation();
-			},
+			animationDuration = 600;
 
-			robinTabClick = function(event){
-				event.preventDefault();
-				if($(this).css('bottom') === '0px'){
-					$(this).animate({bottom:bottom}, animationDuration, function(){
-						$('body').one('click', bodyClick);
-					})
-					
+		self.elementsList.robinTab = self.createRobinTab(bottom, animationDuration)
+		.appendTo('body');
+
+		self.elementsList.header = self.createHeader()
+		.appendTo(self.elementsList.robinTab);
+
+		var title = $('<div/>').html('Contact')
+		.appendTo(self.elementsList.header);
+
+		self.elementsList.robinWrapper = self.createRobinWrapper()
+		.appendTo(self.elementsList.robinTab);
+
+		self.elementsList.robinFrame = self.createRobinFrame()
+		.appendTo(self.elementsList.robinWrapper);
+
+		self.startLoop(function(){
+			var previousStatus = self.onlineStatus;
+			self.log(previousStatus);
+			self.log(self.onlineStatus);
+			self.log("Checking if you are online...")
+			self.isOnline(function(isOnline){
+				if(isOnline){
+					self.log(self.onlineStatus);
+					self.log("You are online!");
+					self.setOnline(previousStatus);
 				}
 				else{
-					$(this).animate({bottom:0}, animationDuration);
+					self.log("You are offline!");
+					self.setOffline(previousStatus);
 				}
-			};
+			});
+		});
+	},
+	createRobinTab:function(bottom, animationDuration){
+		var robinTabClick = function(event){
+			event.preventDefault();
+			if($(this).css('bottom') === '0px'){
+				self.openTab(bottom, animationDuration);
+				
+			}
+			else{
+				self.closeTab(animationDuration);
+			}
+		};
 
-		self.elementsList.robinTab = $('<section id="robinTab"/>').css({
+		return $('<section id="robinTab"/>').css({
 			mozBoxSizing: 'content-box',
 			msBoxSizing: 'content-box',
 			boxSizing: 'content-box',
@@ -305,91 +330,92 @@ robin_JSP = {
 			background: 'linear-gradient(to right, rgba(75,185,255,1) 0%,rgba(36,125,218,1) 65%,rgba(22,102,185,1) 100%)',
 			filter: 'progid:DXImageTransform.Microsoft.gradient( startColorstr="#4bb9ff", endColorstr="#1666b9",GradientType=0)',
 			borderColor: '#83edff'
-		}).click(robinTabClick).appendTo('body').bind('clickoutside', function(event){
-			$(this).animate({bottom:0}, animationDuration);
-		});
-
-
-		self.elementsList.header = $('<header/>').css({
-			fontFamily: "Helvetica, arial,sans-serif",
-			fontSize: "14px",
-			fontWeight: "bold",
-			lineHeight: 1.6,
-			paddingLeft: "25px",
-			marginRight: "25px",
-			textAlign: "left",
-			textTransform: "uppercase",
-			textDecoration: "none",
-			top: 0,
-			verticalAlign: "middle",
-			width: "auto",
-			mozBoxSizing:"content-box",
-			msBoxSizing:"content-box",
-			boxSizing: "content-box",
-			webkitTouchCallout: "none",
-			webkitUserSelect: "none",
-			khtmlUserSelect: "none",
-			mozUserSelect: "none",
-			msUserSelect: "none",
-			userSelect: "none",
-			color: "#E8E8E8",
-			textShadow: "1px 1px 1px #404040",
-		}).appendTo(self.elementsList.robinTab);
-
-		var title = $('<div/>').html('Contact').appendTo(self.elementsList.header);
-
-		self.elementsList.robinWrapper = $('<div/>').css({
-			width:324,
-			height:470,
-			borderWidth:0,
-			position:'relative',
-			top:9,
-			borderImage: "none",
-			borderStyle: "solid solid none",
-			borderWidth: "0px .07em 0px .07em",
-			borderColor: "#e8e8e8"
-		}).appendTo(self.elementsList.robinTab);
-
-		self.elementsList.robinFrame = $("<iframe>")
+		}).click(robinTabClick);
+	},
+	createHeader:function(){
+		return $('<header/>').css({
+					fontFamily: "Helvetica, arial,sans-serif",
+					fontSize: "14px",
+					fontWeight: "bold",
+					lineHeight: 1.6,
+					paddingLeft: "25px",
+					marginRight: "25px",
+					textAlign: "left",
+					textTransform: "uppercase",
+					textDecoration: "none",
+					top: 0,
+					verticalAlign: "middle",
+					width: "auto",
+					mozBoxSizing:"content-box",
+					msBoxSizing:"content-box",
+					boxSizing: "content-box",
+					webkitTouchCallout: "none",
+					webkitUserSelect: "none",
+					khtmlUserSelect: "none",
+					mozUserSelect: "none",
+					msUserSelect: "none",
+					userSelect: "none",
+					color: "#E8E8E8",
+					textShadow: "1px 1px 1px #404040",
+				});
+	},
+	createRobinWrapper:function(){
+		return $('<div/>').css({
+					width:324,
+					height:470,
+					borderWidth:0,
+					position:'relative',
+					top:9,
+					borderImage: "none",
+					borderStyle: "solid solid none",
+					borderWidth: "0px .07em 0px .07em",
+					borderColor: "#e8e8e8"
+				});
+	},
+	createRobinFrame:function(){
+		return $("<iframe>")
 		.attr('src', self.settings.frameUrl()).css({
 			width:"100%",
 			height:"100%"
 		}).attr('frameborder', 'no')
-		.attr('allowtransparency', 'true').appendTo(self.elementsList.robinWrapper);
+		.attr('allowtransparency', 'true');
+	},
+	openTab:function(bottom, animationDuration){
+		var bodyClick = function(event){
+			var $target = $(event.target);
+			if ($target.parents('#robinTab').length == 0) {
+				self.closeTab();
+			}
+			event.stopPropagation();
+		};
 
-		self.startLoop(function(){
-			var previousStatus = self.onlineStatus;
-			self.log(previousStatus);
-			self.log(self.onlineStatus);
-			self.log("Checking if you are online...")
-			self.isOnline(function(isOnline){
-				if(isOnline){
-					self.log(self.onlineStatus);
-					self.log("You are online!");
-					self.setOnline(previousStatus);
-				}
-				else{
-					self.log("You are offline!");
-					self.setOffline(previousStatus);
-				}
-			});
+		self.elementsList.robinTab.animate({bottom:bottom}, animationDuration, function(){
+			//this is event can only be fired once when the tab is opened
+			$('body').one('click', bodyClick);
 		});
+	},
+	closeTab:function(animationDuration){
+		self.elementsList.robinTab.animate({bottom:0}, animationDuration);
 	},
 	setOnline:function(previousStatus){
 		if(previousStatus === false && self.onlineStatus === true){
 			self.log("Setting widget to online state");
+			//update styling
 			self.elementsList.header.css({
 				background: "url(http://selfservice.robinhq.com/external/assets/online_indicator.png) no-repeat",
 				marginLeft: 13,
 				paddingLeft: 35
 			});
+			//reload the iframe
 			self.elementsList.robinFrame.attr('src', function(i, val){return val});
 		}
 		
 	},
+
 	setOffline:function(previousStatus){
 		if(previousStatus === true && self.onlineStatus === false){
 			self.log("Setting widget to offline state");
+			//update styling
 			self.elementsList.header.css({
 				background:'none',
 				paddingLeft:25
