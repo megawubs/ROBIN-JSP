@@ -1,26 +1,34 @@
+if(typeof(sessionStorage) == 'undefined')
+{
+	sessionStorage = {
+		getItem: function(){},
+		setItem: function(){}
+    };
+}
 robin_JSP = {
 	init: function() {
 		//create reverence to this
 		self = this;
 		self.settings = {
-			apikey:'',
+			apikey: false,
 			hideMobile  : true,  // Hide the ROBIN tab on mobile devices
 			hideOffline : false, // Show the ROBIN tab even when you're offline
 			logging     : false, //enable or disable logging
 			theme       : false, //the theme of the tab
-			customTop   : false,
+			customTop   : false, //The top offset of the widget
 			popup		: false //use a popup instead of the robin tab
-		}
+		};
+
 		$.extend(self.settings, robin_JSP_settings);
 		//clear settings variable
 		robin_JSP_settings = {};
 		// Make sure settings are defined
-		if(typeof self.settings.apikey === 'undefined' || self.settings.apikey === '') {
+		if(typeof self.settings.apikey === 'undefined' || self.settings.apikey === '' || self.settings.apikey === false) {
 			self.log('Settings are required and missing')
 			return false;
 		}
 		// Variables not to be defined by user
-		self.settings.apiurl = '//selfservice-acc.robinhq.com';
+		self.settings.apiurl = '//selfservice.robinhq.com';
 		self.settings.tabClosedBottom = 480,
 			self.settings.animationDuration = 600;
 		// Variables to manage loading
@@ -32,13 +40,11 @@ robin_JSP = {
 		self.querys = {};
 		self.settings.frameUrl = function(){
 			var url = self.settings.apiurl + '/apikey/' + self.settings.apikey;
-			if(self.urlHasRobinConversationID()){
+			if(self.hasRobinConversationID()){
 				url += '/' + self.querys.rbn_cnv;
 			}
 			return url;
 		}
-
-		
 
 		if(self.settings.hideMobile === true) {
 			self.log('Setting "hideMobile : '+self.settings.hideMobile+'" detected');
@@ -110,7 +116,6 @@ robin_JSP = {
 			self.log('Setting "popup: ' + self.settings.popup +'" detected');
 			self.loadPopup().done(function(){
 				if(self.urlHasRobinConversationID()){
-					console.log('blaaaat?');
 					self.openTab();
 				}
 			});
@@ -194,7 +199,7 @@ robin_JSP = {
 	},
 	API: function(service,callback) {
 		var url = self.settings.apiurl +'/' + service
-		self.log('requesting: ' + url);
+		self.log('API: Requesting: ' + url);
 		var request;
 		if(window.XMLHttpRequest){
 			request=new XMLHttpRequest;
@@ -263,7 +268,7 @@ robin_JSP = {
 		}
 	},
 	loadPopup:function(){
-		self.log('loading popup');
+		self.log('Loading popup');
 		var dfd = new $.Deferred();
 
 		self.elementsList.robinTab = self.createRobinTab()
@@ -272,7 +277,7 @@ robin_JSP = {
 		self.elementsList.header = self.createHeader()
 		.appendTo(self.elementsList.robinTab);
 
-		var title = $('<div/>').html('Contact')
+		self.elementsList.headerTitle = $('<div/>').html('Contact')
 		.appendTo(self.elementsList.header);
 
 		self.elementsList.robinWrapper = self.createRobinWrapper()
@@ -283,12 +288,9 @@ robin_JSP = {
 
 		self.startLoop(function(){
 			var previousStatus = self.onlineStatus;
-			self.log(previousStatus);
-			self.log(self.onlineStatus);
 			self.log("Checking if you are online...")
 			self.isOnline(function(isOnline){
 				if(isOnline){
-					self.log(self.onlineStatus);
 					self.log("You are online!");
 					self.setOnline(previousStatus);
 				}
@@ -413,12 +415,12 @@ robin_JSP = {
 				marginLeft: 13,
 				paddingLeft: 35
 			});
+			self.elementsList.headerTitle.html(self.settings.popup.onlineText);
 			//reload the iframe
 			self.elementsList.robinFrame.attr('src', function(i, val){return val});
 		}
 		
 	},
-
 	setOffline:function(previousStatus){
 		if(previousStatus === true && self.onlineStatus === false){
 			self.log("Setting widget to offline state");
@@ -430,7 +432,6 @@ robin_JSP = {
 			self.elementsList.robinFrame.attr('src', function(i, val){return val});
 		}
 	},
-
 	getQueryStrings: function () {
 		var queryStrings = {},
 			query = window.location.search.substring(1),
@@ -451,7 +452,14 @@ robin_JSP = {
 		}
 		return queryStrings;
 	},
-
+	hasRobinConversationID:function(){
+		var value = sessionStorage.getItem('rbn_cnv');
+		if(typeof value === 'string'){
+			self.querys.rbn_cnv = value;
+			return true;
+		}
+		return self.urlHasRobinConversationID();
+	},
 	urlHasRobinConversationID:function(){
 		var querys = self.getQueryStrings();
 		if(typeof querys.rbn_cnv !== 'undefined'){
@@ -472,4 +480,5 @@ robin_JSP = {
 		repeat();
 	}
 }
+
 robin_JSP.init();
