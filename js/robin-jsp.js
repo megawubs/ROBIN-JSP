@@ -282,7 +282,7 @@ robin_JSP = {
 
 		self.elementsList.robinWrapper = self.createRobinWrapper()
 		.appendTo(self.elementsList.robinTab);
-
+		
 		self.elementsList.robinFrame = self.createRobinFrame()
 		.appendTo(self.elementsList.robinWrapper);
 

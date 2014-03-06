@@ -28,7 +28,7 @@ robin_JSP = {
 			return false;
 		}
 		// Variables not to be defined by user
-		self.settings.apiurl = '//selfservice.robinhq.com';
+		self.settings.apiurl = '//selfservice-acc.robinhq.com';
 		self.settings.tabClosedBottom = 480,
 			self.settings.animationDuration = 600;
 		// Variables to manage loading
@@ -276,7 +276,7 @@ robin_JSP = {
 
 		self.elementsList.header = self.createHeader()
 		.appendTo(self.elementsList.robinTab);
-
+		
 		self.elementsList.headerTitle = $('<div/>').html('Contact')
 		.appendTo(self.elementsList.header);
 
