@@ -24,7 +24,7 @@ var robin_JSP_settings = {
   theme       : 'theme-name' //the theme for the tab, overwrites the customTop setting
 };
 </script>
-<script type="text/javascript" src="//raw.github.com/megawubs/ROBIN-JSP/master/js/robin-jsp.min.js" async="async"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/robinjsp/0.0.1/robin-jsp.min.js" async="async"></script>
 ```
 
 ## Settings
