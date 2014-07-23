@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "gulp": "^3.8.6",
+    "gulp-jshint": "^1.7.1",
+    "gulp-jsmin": "^0.1.4",
+    "gulp-rename": "^1.2.0",
+    "gulp-uglify": "^0.3.1",
+    "jshint-stylish": "^0.4.0"
+  }
+}

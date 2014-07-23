@@ -1,20 +1,30 @@
 <html>
 <head>
-<title>ROBIN-JSP Example</title>
+	<title>ROBIN-JSP Example</title>
 </head>
 <body>
-<p>
-   Hello World
-</p>
-<!-- Always add the ROBIN script before the closing </body> tag -->
-<script type="text/javascript">
-var robin_JSP_settings = {
-  apikey      : '',    // Set your API key (REQUIRED)
-  hideMobile  : true,  // Hide the ROBIN tab on mobile devices
-  hideOffline : false, // Show the ROBIN tab even when you're offline
-  customTop   : '30%'  // Adjust the vertical position of the ROBIN tab
+	<p>
+		Hello World
+	</p>
+	<!-- Always add the ROBIN script before the closing </body> tag -->
+	<script type="text/javascript">
+	var robin_JSP_settings = {
+	apikey		: '12m5k9n1',    // Set your API key (REQUIRED)
+	hideMobile	: true,  // Hide the ROBIN tab on mobile devices
+	hideOffline	: false, // Show the ROBIN tab even when you're offline
+	customTop	: '30%',  // Adjust the vertical position of the ROBIN tab
+	logging		: true,
+	apiurl: 	'//selfservice-acc.robinhq.com',
+	popup	: {
+		position:'right', //the position of the tab on your site (right or left)
+		color:'dark', //the color scheme you want your tab to have
+		textOnline:'Live Chat', //text that will appear when you are online
+		textOffline:'Contact Us', //text that will appear when you are offline,
+		width: 324
+	}
 };
 </script>
+<!-- <div id="livechat-compact-container" style="position: fixed; bottom: 0px; right: 15px; width: 250px; height: 53px; overflow: hidden; visibility: visible; z-index: 2147483639; border: 0px; opacity: 1; background: transparent;"><iframe src="javascript:false" id="livechat-compact-view" style="position: relative;top: 20px;left: 0;right: 0;width: 100%;border: 0;padding: 0;margin: 0;float: none;background: none" scrolling="no" frameborder="0" allowtransparency="true"></iframe><a id="livechat-badge" href="#" onclick="LC_API.show_full_view();return false" style="visibility: hidden; opacity: 0;"></a><div class="chat_wrapper2"><div class="e_pop" onclick="LC_API.open_chat_window();"><img src='http://usa.triangl.com.au/sites/all/themes/triangl/images/needsomehelp.png' style ='width:180px;height:240px;'></div><div class="online_wrapper2" style="width:250px !important;" onclick="LC_API.open_chat_window();"><div class="online_bottom"><div class="chat_status"><img src="//cdn.shopify.com/s/files/1/0312/1389/t/2/assets/plus.png?3604" onclick="LC_API.open_chat_window();"> LIVE CHAT</div><div class="online_cam"><a href="#"><img style="float:left;width: 26px;" src="//cdn.shopify.com/s/files/1/0312/1389/t/2/assets/chat.png?3604"></a><img style=" height:7px;position:absolute;right:20px;top:20px;width:22px;" src="//cdn.shopify.com/s/files/1/0312/1389/t/2/assets/up.png?3604"></div></div></div></div></div> -->
 <script type="text/javascript" src="js/jquery.1.11.0.min.js"></script>
 <script type="text/javascript" src="js/robin-jsp.min.js"></script>
 </body>
