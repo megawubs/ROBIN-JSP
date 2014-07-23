@@ -39,3 +39,4 @@ Thumbs.db
 # Development related files and folders #
 #########################################
 test/
+node_modules/
