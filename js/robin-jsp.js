@@ -526,19 +526,19 @@ robin_JSP = {
 		};
 		width = (self.settings.popup.openWidth < self.settings.popup.openMinWidth) ? self.settings.popup.openMinWith : self.settings.popup.openMinWidth;
 		console.log(self.settings.popup.openMinWidth)
-		self.elementsList.robinTab.animate({bottom:self.settings.tabClosedBottom, width:width}, self.settings.animationDuration, function(){
+		self.elementsList.robinTab.css({bottom:self.settings.tabClosedBottom, width:width}, self.settings.animationDuration, function(){
 			//this event can only be fired once when the tab is opened
 			$('body').one('click', bodyClick);
 
 		});
-		self.elementsList.robinFrame.animate({width:width}, self.settings.animationDuration);
+		self.elementsList.robinFrame.css({width:width}, self.settings.animationDuration);
 		self.elementsList.buttonUp.attr('src', self.buttons.down)
 		self.elementsList.bubble.fadeOut(self.settings.animationDuration);
 	},
 
 	closeTab:function(){
 		console.log(self.settings.popup.buttonWidth);
-		self.elementsList.robinTab.animate({bottom:0, width:self.settings.popup.buttonWidth}, self.settings.animationDuration)
+		self.elementsList.robinTab.css({bottom:0, width:self.settings.popup.buttonWidth}, self.settings.animationDuration)
 		.promise().done(function(){
 			self.elementsList.bubble.fadeIn(self.settings.animationDuration);
 		});
