@@ -78,6 +78,7 @@ robin_JSP = {
 			if(self.hasRobinConversationID()){
 				url += '/' + self.querys.rbn_cnv;
 			}
+			self.log(url);
 			return url;
 		};
 
@@ -458,7 +459,6 @@ robin_JSP = {
 		return $('<div/>').css({
 					width:  self.settings.popup.buttonWidth + 'px',
 					height:479,
-					// borderWidth:0,
 					top:0,
 					borderImage: "none",
 					borderStyle: "solid solid none",
@@ -468,8 +468,10 @@ robin_JSP = {
 	},
 
 	createRobinFrame:function(){
+		url = self.settings.frameUrl()
+		self.log('building the robi frame with src:' + url)
 		return $("<iframe>")
-		.attr('src', self.settings.frameUrl()).css({
+		.attr('src', url).css({
 			width:"100%",
 			height:"100%"
 		}).attr('frameborder', 'no')
