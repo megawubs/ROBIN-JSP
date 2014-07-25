@@ -318,10 +318,10 @@ robin_JSP = {
 
 		self.elementsList.robinTab = self.createRobinTab()
 		.appendTo('body');
-
+		self.elementsList.bubble = self.createBubble()
 		if(sessionStorage.getItem('rbn_bubble_show') === 'yes'){
-			self.elementsList.bubble = self.createBubble()
-			.appendTo('body');
+			
+			self.elementsList.bubble.appendTo('body');
 		}
 
 		
@@ -563,7 +563,7 @@ robin_JSP = {
 				return;
 			}
 		}
-
+		self.log(self.settings.tabOpened);
 		if(!self.settings.tabOpened){
 			self.elementsList.robinFrame.appendTo(self.elementsList.robinWrapper)
 		}
