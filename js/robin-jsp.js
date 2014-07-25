@@ -436,10 +436,10 @@ robin_JSP = {
 		return $('<img/>')
 			.attr('src', self.buttons.chat)
 			.css({
-				position:'relative',
-				top:3,
+				// position:'relative',
+				// top:3,
 				paddingLeft:10,
-				width:15
+				width:25
 			})
 	},
 
@@ -493,8 +493,8 @@ robin_JSP = {
 			 	borderBottomRightRadius: "0px",
 			 	borderBottomLeftRadius: "0px",
 			 	padding: "4px",
-			 	width: "190px",
-			 	height: "180px",
+			 	width: "198",
+			 	height: "222px",
 			 	borderWidth: "0px",
 			 	backgroundColor: "rgb(0, 0, 0)",
 			 	cursor:"pointer"
