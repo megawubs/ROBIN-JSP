@@ -76,7 +76,7 @@ robin_JSP = {
 		self.querys = {};
 		self.settings.frameUrl = function(){
 			var url = self.settings.apiurl + '/apikey/' + self.settings.apikey;
-			if(self.urlHasRobinConversationID()){
+			if(self.hasRobinConversationID()){
 				url += '/' + self.querys.rbn_cnv;
 			}
 			url += "?href=" + window.location.href;
