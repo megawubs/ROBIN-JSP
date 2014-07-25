@@ -1,8 +1,23 @@
 if(typeof(sessionStorage) == 'undefined')
 {
 	sessionStorage = {
-		getItem: function(){},
-		setItem: function(){}
+		getItem: function(name){
+			if (document.cookie.length > 0) {
+                var start = document.cookie.indexOf(name + "=");
+                if (start != -1) {
+                    start = start + name.length + 1;
+                    var end = document.cookie.indexOf(";", start);
+                    if (end == -1) {
+                        end = document.cookie.length;
+                    }
+                    return unescape(document.cookie.substring(start, end));
+                }
+            }
+            return '';
+		},
+		setItem: function(name, value){
+			 document.cookie = name + "=" + value + "; path=/";
+		}
     };
 }
 
@@ -632,6 +647,7 @@ robin_JSP = {
 		var querys = self.getQueryStrings();
 		if(typeof querys.rbn_cnv !== 'undefined'){
 			self.log('Found Robin query string');
+			sessionStorage.setItem('rbn_cnv', querys.rbn_cnv);
 			self.querys = querys;
 		}
 		else{
