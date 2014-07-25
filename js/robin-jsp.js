@@ -79,7 +79,7 @@ robin_JSP = {
 			if(self.urlHasRobinConversationID()){
 				url += '/' + self.querys.rbn_cnv;
 			}
-			url += "?href" + window.location.href;
+			url += "?href=" + window.location.href;
 			self.log(url);
 			return url;
 		};
