@@ -416,7 +416,6 @@ robin_JSP = {
 
 	createHeaderTitle: function(){
 		title = (self.onlineStatus === false) ? self.settings.popup.textOffline : elf.settings.popup.textOnline;
-		button = self.createButtonPlus()
 		return $('<div/>').html(title).css({
 			left:'2%',
 			position:'relative',
@@ -552,12 +551,9 @@ robin_JSP = {
 		if(previousStatus === false && self.onlineStatus === true){
 			self.log("Setting widget to online state");
 			//update styling
-			self.elementsList.header.css({
-				background: "url(http://selfservice.robinhq.com/external/assets/online_indicator.png) no-repeat",
-				marginLeft: 13,
-				paddingLeft: 35
-			});
 			self.elementsList.headerTitle.html(self.settings.popup.textOnline);
+			self.elementsList.buttonPlus.appendTo(self.elementsList.headerTitle)
+			self.elementsList.buttonChat.appendTo(self.elementsList.headerTitle)
 			//reload the iframe
 			self.elementsList.robinFrame.attr('src', function(i, val){return val;});
 		}
