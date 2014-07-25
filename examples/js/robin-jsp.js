@@ -457,10 +457,9 @@ robin_JSP = {
 	createRobinWrapper:function(){
 		return $('<div/>').css({
 					width:  self.settings.popup.buttonWidth + 'px',
-					height:470,
+					height:479,
 					// borderWidth:0,
-					position:'relative',
-					top:9,
+					top:0,
 					borderImage: "none",
 					borderStyle: "solid solid none",
 					borderWidth: "0px .07em 0px .07em",
