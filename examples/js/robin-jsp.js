@@ -54,7 +54,7 @@ robin_JSP = {
 		// Make sure settings are defined
 		if(typeof self.settings.apikey === 'undefined' || self.settings.apikey === '' || self.settings.apikey === false) {
 			self.log('API key is required but missing');
-			return false;
+			return false; //stop initialization
 		}
 		self.buttons = {
 			chat : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAA7CAYAAADLjIzcAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAm5JREFUeNrsmtFxgkAQhhcm79JBSAViBZIKYgfRCmIqCHagHWAHdhDoADvADqACcpcshjCHgAgut/lndiZjzE32u9u9vb0zsiyDDrKFLYS5+PMU+lcqLEILhB26DGZcAcAStkQbwuEmQCQEH4G0kwTQwjxhSUZXgTC3jU9NV4CLhB9hHNoJ84QldV80GwwmB/ockfNSbxgOTpccIGN9K+wVxqsUc9WhLQALCU5BD60whBsD8Ec+8yrNcOuszQGehs4Drmi7bgW4mPB0VYg+KleAVRUnGmkubF0FYD2yre5aeTjZfwBYZTIaa1L0NQewxF9wkRIAJ03wFPsNYKhjLDWdASyAp84AXKYAZBg4pqo6YiTbZBr/uRwTmIs7AJs7AIs7gOg/Bwg7MfY/lgBi7gACxgACCeDA1PkwzwER0zxwKBZCHFeBXwSwZeb8HvDeMAcQ44dc5KnOAvLDlIHzu+LWXwQQF8loqlPZR9XdoKwL5poCeC7XPaqzgOyVHTV0/l1V9FXdDjv4ZV3uCmSCX1YdhpTHRPhplqY6O38JQA7BHnk4rKDm0qeuH5BgOGxGmO1n0OC2u2lDxMMBQ+KOpzhZNiheg6h0zUNJmRvk5eILsRn3saRP2vyh0eGprA2/z2TdO+wYR9ypgi6HOaPjW+EyEGkW5o2PBufxoMX4SWFZB7f6p28JoKy6gZ+AQDvuXl3hDRDpRfa5ApKKvJBiqCQUAPS5AqILWyoJ5+8RAicg1n0aGgC5l2hDAgiBYPPV5Dz7QwLYN63NdQSQAuFeY58A8kJnC4QvYPsGQG7bGzoESBU9Kj30XAmSv3P8EmAAdvt+hzaO0tAAAAAASUVORK5CYII=',
@@ -75,11 +75,11 @@ robin_JSP = {
 		self.elementsList = {};
 		self.querys = {};
 		self.settings.frameUrl = function(){
-			console.log(self.settings.apikey);
 			var url = self.settings.apiurl + '/apikey/' + self.settings.apikey;
-			if(self.hasRobinConversationID()){
-				// url += '/' + self.querys.rbn_cnv;
+			if(self.urlHasRobinConversationID()){
+				url += '/' + self.querys.rbn_cnv;
 			}
+			url += "?href" + window.location.href;
 			self.log(url);
 			return url;
 		};
@@ -325,8 +325,7 @@ robin_JSP = {
 		.appendTo(self.elementsList.robinTab);
 		
 		self.elementsList.robinFrame = self.createRobinFrame();
-		// self.elementsList.robinLoader = self.createRobinLoader()
-		// .appendTo(self.elementsList.robinWrapper);
+
 		self.startLoop(function(){
 			var previousStatus = self.onlineStatus;
 			self.log("Checking if you are online...");
@@ -438,8 +437,6 @@ robin_JSP = {
 		return $('<img/>')
 			.attr('src', self.buttons.chat)
 			.css({
-				// position:'relative',
-				// top:3,
 				paddingLeft:10,
 				width:25
 			});
@@ -501,7 +498,19 @@ robin_JSP = {
 			 	borderWidth: "0px",
 			 	backgroundColor: "rgb(0, 0, 0)",
 			 	cursor:"pointer"
-			}).html(self.settings.popup.bubbleText),
+			}),
+		closer = $('<div />').css({
+				fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+				color:"#ffffff",
+				fontSize: "20px",
+				fontWeight: "bold",
+				lineHeight: "18px",
+				opacity: "0.2",
+				filter: "alpha(opacity=20)",
+				textDecoration: "none",
+				cssFloat: "right",
+				paddingRight: "5px",
+		}).attr('id','bubbleClose').html('x').appendTo(bubble).click(self.closeBubble),
 		pointer = $('<div/>')
 			.css({
 				content: "",
@@ -515,18 +524,31 @@ robin_JSP = {
 				bottom: "-64px",
 				left: "0px",
 			}).appendTo(bubble);
-		// closer = $('<div/>');
 
-	return bubble.click(self.openTab);
+	return bubble.append(self.settings.popup.bubbleText).click(self.openTab);
 	},
 
-	openTab:function(){
+
+	closeBubble:function(event){
+		event.stopPropagation();
+		self.log('closing bubble...');
+		self.elementsList.bubble.remove();
+	},
+
+	openTab:function(event){
+		if(event !== undefined){
+			event.stopPropagation();
+			if($(event.target).attr('id') === 'bubbleClose'){
+				self.closeBubble()
+				return;
+			}
+		}
 		var bodyClick = function(event){
+			event.stopPropagation();
 			var $target = $(event.target);
 			if ($target.parents('#robinTab').length === 0) {
 				self.closeTab();
 			}
-			event.stopPropagation();
 		};
 
 		if(!self.settings.tabOpened){
@@ -536,16 +558,12 @@ robin_JSP = {
 		width = (self.settings.popup.openWidth < self.settings.popup.openMinWidth) ? self.settings.popup.openMinWith : self.settings.popup.openMinWidth;
 		console.log(self.settings.popup.openMinWidth)
 		
-		self.elementsList.robinTab.css({bottom:self.settings.tabClosedBottom, width:width}, self.settings.animationDuration, function(){
-			//this event can only be fired once when the tab is opened
-			$('body').one('click', bodyClick);
-
-		});
+		self.elementsList.robinTab.css({bottom:self.settings.tabClosedBottom, width:width});
+		$('body').one('click', bodyClick);
 		self.elementsList.robinFrame.css({width:width}, self.settings.animationDuration);
 		self.elementsList.buttonUp.attr('src', self.buttons.down)
-		self.elementsList.bubble.fadeOut(self.settings.animationDuration);
+		self.elementsList.bubble.hide();
 		self.settings.tabOpened = true;
-		console.log(self.elementsList.bubble);
 	},
 
 	closeTab:function(){
