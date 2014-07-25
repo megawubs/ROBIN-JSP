@@ -500,7 +500,7 @@ robin_JSP = {
 			 	borderWidth: "0px",
 			 	backgroundColor: "rgb(0, 0, 0)",
 			 	cursor:"pointer"
-			}).html("need some help?"),
+			}).html(self.settings.popup.bubbleText),
 		pointer = $('<div/>')
 			.css({
 				content: "",
@@ -514,6 +514,7 @@ robin_JSP = {
 				bottom: "-64px",
 				left: "0px",
 			}).appendTo(bubble);
+		closer = $('<div/>').
 
 	return bubble.click(self.openTab);
 	},
@@ -563,11 +564,9 @@ robin_JSP = {
 		if(previousStatus === true && self.onlineStatus === false){
 			self.log("Setting widget to offline state");
 			//update styling
-			self.elementsList.header.css({
-				background:'none',
-				paddingLeft:25
-			});
 			self.elementsList.headerTitle.html(self.settings.popup.textOffline);
+			self.elementsList.buttonPlus.appendTo(self.elementsList.headerTitle)
+			self.elementsList.buttonChat.appendTo(self.elementsList.headerTitle)
 			self.elementsList.robinFrame.attr('src', function(i, val){return val;});
 		}
 	},
