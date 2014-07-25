@@ -76,9 +76,9 @@ robin_JSP = {
 		self.settings.frameUrl = function(){
 			console.log(self.settings.apikey);
 			var url = self.settings.apiurl + '/apikey/' + self.settings.apikey;
-			// if(self.hasRobinConversationID()){
-			// 	url += '/' + self.querys.rbn_cnv;
-			// }
+			if(self.hasRobinConversationID()){
+				url += '/' + self.querys.rbn_cnv;
+			}
 			self.log(url);
 			return url;
 		};
