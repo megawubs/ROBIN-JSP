@@ -77,7 +77,7 @@ robin_JSP = {
 			console.log(self.settings.apikey);
 			var url = self.settings.apiurl + '/apikey/' + self.settings.apikey;
 			if(self.hasRobinConversationID()){
-				url += '/' + self.querys.rbn_cnv;
+				// url += '/' + self.querys.rbn_cnv;
 			}
 			self.log(url);
 			return url;
@@ -574,6 +574,7 @@ robin_JSP = {
 			self.elementsList.robinFrame.attr('src', function(i, val){return val;});
 		}
 	},
+	
 	getQueryStrings: function () {
 		var queryStrings = {},
 			query = window.location.search.substring(1),
@@ -594,6 +595,7 @@ robin_JSP = {
 		}
 		return queryStrings;
 	},
+
 	hasRobinConversationID:function(){
 		var value = sessionStorage.getItem('rbn_cnv');
 		if(typeof value === 'string'){
@@ -602,6 +604,7 @@ robin_JSP = {
 		}
 		return self.urlHasRobinConversationID();
 	},
+
 	urlHasRobinConversationID:function(){
 		var querys = self.getQueryStrings();
 		if(typeof querys.rbn_cnv !== 'undefined'){
