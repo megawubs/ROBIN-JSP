@@ -500,7 +500,7 @@ robin_JSP = {
 			 	borderWidth: "0px",
 			 	backgroundColor: "rgb(0, 0, 0)",
 			 	cursor:"pointer"
-			}).html("need some help?"),
+			}).html(self.settings.popup.bubbleText),
 		pointer = $('<div/>')
 			.css({
 				content: "",
@@ -514,6 +514,7 @@ robin_JSP = {
 				bottom: "-64px",
 				left: "0px",
 			}).appendTo(bubble);
+		closer = $('<div/>').
 
 	return bubble.click(self.openTab);
 	},
