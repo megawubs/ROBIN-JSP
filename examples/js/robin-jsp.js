@@ -26,7 +26,8 @@ robin_JSP = {
 				textOnline:'Live Chat', //text that will appear when you are online
 				textOffline:'Contact Us', //text that will appear when you are offline,
 				buttonWidth: 200,
-				openWidth: 325
+				openWidth: 325,
+				bubbleText:'need some help?'
 		}
 
 		$.extend(self.settings, robin_JSP_settings);
@@ -552,11 +553,11 @@ robin_JSP = {
 			self.log("Setting widget to online state");
 			//update styling
 			self.elementsList.header.css({
-				// background: "url(http://selfservice.robinhq.com/external/assets/online_indicator.png) no-repeat",
-				// marginLeft: 13,
-				// paddingLeft: 35
+				background: "url(http://selfservice.robinhq.com/external/assets/online_indicator.png) no-repeat",
+				marginLeft: 13,
+				paddingLeft: 35
 			});
-			// self.elementsList.headerTitle.html(self.settings.popup.textOnline);
+			self.elementsList.headerTitle.html(self.settings.popup.textOnline);
 			//reload the iframe
 			self.elementsList.robinFrame.attr('src', function(i, val){return val;});
 		}
@@ -574,7 +575,7 @@ robin_JSP = {
 			self.elementsList.robinFrame.attr('src', function(i, val){return val;});
 		}
 	},
-	
+
 	getQueryStrings: function () {
 		var queryStrings = {},
 			query = window.location.search.substring(1),
