@@ -46,6 +46,10 @@ robin_JSP = {
 
 		$.extend(self.settings, robin_JSP_settings);
 		if(typeof self.settings.popup === 'object'){
+			if(!sessionStorage.getItem('rbn_bubble_show')){
+				sessionStorage.setItem('rbn_bubble_show', 'yes');
+			}
+			
 			$.extend(self.settings.popup, self.popup);
 			self.popup = {};
 			self.settings.popup.buttonMinWidth = 220;
@@ -60,9 +64,6 @@ robin_JSP = {
 				self.log('Your open width is to small, setting it to the minimum of ' + self.settings.popup.openMinWidth);
 				self.settings.popup.openWidth = self.settings.popup.openMinWidth;
 			}
-
-			
-
 		}
 		//clear settings variable
 		robin_JSP_settings = {};
@@ -318,9 +319,12 @@ robin_JSP = {
 		self.elementsList.robinTab = self.createRobinTab()
 		.appendTo('body');
 
-		self.elementsList.bubble = self.createBubble()
-		.appendTo('body');
+		if(sessionStorage.getItem('rbn_bubble_show') === 'yes'){
+			self.elementsList.bubble = self.createBubble()
+			.appendTo('body');
+		}
 
+		
 		self.elementsList.header = self.createHeader()
 		.appendTo(self.elementsList.robinTab);
 
@@ -548,6 +552,7 @@ robin_JSP = {
 		event.stopPropagation();
 		self.log('closing bubble...');
 		self.elementsList.bubble.remove();
+		sessionStorage.setItem('rbn_bubble_show', 'no');
 	},
 
 	openTab:function(event){
@@ -558,20 +563,12 @@ robin_JSP = {
 				return;
 			}
 		}
-		var bodyClick = function(event){
-			event.stopPropagation();
-			var $target = $(event.target);
-			if ($target.parents('#robinTab').length === 0) {
-				self.closeTab();
-			}
-		};
 
 		if(!self.settings.tabOpened){
 			self.elementsList.robinFrame.appendTo(self.elementsList.robinWrapper)
 		}
 
 		width = (self.settings.popup.openWidth < self.settings.popup.openMinWidth) ? self.settings.popup.openMinWith : self.settings.popup.openMinWidth;
-		console.log(self.settings.popup.openMinWidth)
 		
 		self.elementsList.robinTab.css({bottom:self.settings.tabClosedBottom, width:width});
 		
@@ -602,6 +599,7 @@ robin_JSP = {
 		}
 		
 	},
+
 	setOffline:function(previousStatus){
 		if(previousStatus === true && self.onlineStatus === false){
 			self.log("Setting widget to offline state");
