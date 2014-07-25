@@ -153,7 +153,7 @@ robin_JSP = {
 		if(typeof self.settings.popup === "object"){
 			self.log('Setting "popup: ' + JSON.stringify(self.settings.popup) +'" detected');
 			self.loadPopup().done(function(){
-				if(self.urlHasRobinConversationID()){
+				if(self.hasRobinConversationID()){
 					self.openTab();
 				}
 			});
