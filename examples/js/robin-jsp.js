@@ -90,7 +90,7 @@ robin_JSP = {
 		self.elementsList = {};
 		self.querys = {};
 		self.settings.frameUrl = function(){
-			var url = self.settings.apiurl + '/apikey/' + self.settings.apikey;
+			var url = self.settings.apiurl + '/apikey/' + self.settings.apikey + '/';
 			if(self.hasRobinConversationID()){
 				url += '/' + self.querys.rbn_cnv;
 			}
