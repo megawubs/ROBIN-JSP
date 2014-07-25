@@ -92,9 +92,9 @@ robin_JSP = {
 		self.settings.frameUrl = function(){
 			var url = self.settings.apiurl + '/apikey/' + self.settings.apikey + '/';
 			if(self.hasRobinConversationID()){
-				url += '/' + self.querys.rbn_cnv;
+				url += self.querys.rbn_cnv;
 			}
-			url += "?href=" + window.location.href;
+			url += "/?href=" + window.location.href;
 			self.log(url);
 			return url;
 		};
@@ -574,7 +574,7 @@ robin_JSP = {
 		console.log(self.settings.popup.openMinWidth)
 		
 		self.elementsList.robinTab.css({bottom:self.settings.tabClosedBottom, width:width});
-		$('body').one('click', bodyClick);
+		
 		self.elementsList.robinFrame.css({width:width}, self.settings.animationDuration);
 		self.elementsList.buttonUp.attr('src', self.buttons.down)
 		self.elementsList.bubble.hide();
