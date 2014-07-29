@@ -9,14 +9,18 @@ var gulp = require('gulp'),
 
 
 gulp.task('default', function(){
+
+	gulp.run('js');
+
 	gulp.watch('js/**/*.js', ['lint', 'js']);
 });
 
 gulp.task('js', function(){
 
 	return streamqueue({ objectMode: true },
-			gulp.src('js/start.js'),
+			gulp.src('js/Robin.js'),
 			gulp.src('js/Robin.Utils.PubSub.js'),
+			gulp.src('js/Robin.ButtonMaker.js'),
 			gulp.src('js/Robin.Core.js')
 		)
 	.pipe(concat('robin-jsp.js'))
@@ -26,18 +30,10 @@ gulp.task('js', function(){
 	.pipe(rename('robin-jsp.min.js')) //rename it to *.min.js
 	.pipe(gulp.dest('build')) //save it to the js dir
 	.pipe(gulp.dest('examples/js')) //save it to the examples dir
-
-	// return gulp.src('js/robin-jsp.js')
-	// 		.pipe(gulp.dest('examples/js')) //get the unchanged source to the examples dir
-	// 		.pipe(jsmin()) // minify it
-	// 		.pipe(uglify()) // uglify it
-	// 		.pipe(rename('robin-jsp.min.js')) //rename it to *.min.js
-	// 		.pipe(gulp.dest('js')) //save it to the js dir
-	// 		.pipe(gulp.dest('examples/js')) //save it to the examples dir
 });
 
 gulp.task('lint', function(){
-	return gulp.src('js/robin-jsp.js')
+	return gulp.src('./js/*.js')
 			.pipe(jshint())
 			.pipe(jshint.reporter(stylish));
 });
