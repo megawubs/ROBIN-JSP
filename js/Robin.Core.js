@@ -1,8 +1,7 @@
-(function(core){
+(function(self){
+	"use strict";
 
-	var pubsub = Robin.Utils.PubSub;
-
-	core.addEvent = function(element, event, action){
+	self.addEvent = function(element, event, action){
 		if(element.addEventListener){
 			element.addEventListener(event, action, false);
 		}
@@ -11,32 +10,60 @@
 		}
 	};
 
-	core.init =  function(){
-		core.checkForRobin();
-		// Robin.Utils.log(Robin.ButtonMaker);
+	self.init =  function(){
+		self.checkForRobin();
+		self.checkForPopOver();
+        self.deleteRobinClose();
+		Robin.Settings.minWith = 325;
+		Robin.Settings.tabClosedBottom = 480;
+		Robin.Settings.animationDuration = 600;
+		Robin.Settings.tabOpened = false;
+		Robin.Settings.popup.buttonMinWidth = 220;
+		Robin.Settings.popup.openMinWidth = 330;
+
+		if(Robin.Settings.popup.buttonWidth < Robin.Settings.popup.buttonMinWidth){
+            Robin.Utils.log('Your button width is to small, setting it to the minimum of ' + Robin.Settings.popup.buttonMinWidth);
+            Robin.Settings.popup.buttonWidth = Robin.Settings.popup.buttonMinWidth;
+        }
+
+        if(Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth){
+            Robin.Utils.log('Your open width is to small, setting it to the minimum of ' + Robin.Settings.popup.openMinWidth);
+            Robin.Settings.popup.openWidth = Robin.Settings.popup.openMinWidth;
+        }
+
 		Robin.ButtonMaker.make();
 	};
 
-	core.checkForRobin = function(){
+	self.checkForRobin = function(){
 		if(typeof __robin === 'undefined'){
 			console.log('undefined');
-			setTimeout(core.checkForRobin, 5000);
+			setTimeout(self.checkForRobin, 0.1);
 		}
 		else{
-			Robin.Utils.PubSub.trigger('core.found.robin', __robin);
+			Robin.trigger('robin.found.robin.var', __robin);
 		}
 	};
 
+    self.checkForPopOver = function(){
+        var popOver = document.getElementById('robin_popover');
+        if( popOver === null){
+            setTimeout(self.checkForPopOver, 0.1);
+        }
+        else{
+            Robin.trigger('robin.pop_over.found', $(popOver));
+        }
+    };
 
-	core.setListener = function(tab){
-		core.addEvent(tab, 'onmouseover', function(){
-			console.log('blaat');
-		});
-		core.addEvent(tab, 'click', function(event){
-			console.log(event);
-		});
-	};
-	return core;
+    self.deleteRobinClose = function () {
+        var buttons = document.getElementById('robin_close');
+        if( buttons === null){
+            setTimeout(self.deleteRobinClose, 0.1);
+        }
+        else{
+            $(buttons).remove();
+        }
+    };
+	return self;
 })(Robin.Core);
 
 

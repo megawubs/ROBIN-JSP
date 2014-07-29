@@ -9,9 +9,7 @@ var gulp = require('gulp'),
 
 
 gulp.task('default', function(){
-
-	gulp.run('js');
-
+    gulp.start('lint', 'js');
 	gulp.watch('js/**/*.js', ['lint', 'js']);
 });
 
@@ -20,7 +18,10 @@ gulp.task('js', function(){
 	return streamqueue({ objectMode: true },
 			gulp.src('js/Robin.js'),
 			gulp.src('js/Robin.Utils.PubSub.js'),
+			gulp.src('js/Robin.Storage.js'),
+            gulp.src('js/Robin.Animator.js'),
 			gulp.src('js/Robin.ButtonMaker.js'),
+            gulp.src('js/Robin.PopOver.js'),
 			gulp.src('js/Robin.Core.js')
 		)
 	.pipe(concat('robin-jsp.js'))
@@ -36,4 +37,8 @@ gulp.task('lint', function(){
 	return gulp.src('./js/*.js')
 			.pipe(jshint())
 			.pipe(jshint.reporter(stylish));
+});
+
+gulp.task('linter', function(){
+	gulp.watch('js/**/*.js', ['lint']);
 });

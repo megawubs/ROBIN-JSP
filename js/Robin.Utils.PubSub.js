@@ -30,6 +30,7 @@
 	 *  @data: The data to pass to subscribers
 	 **/
 	 p.trigger = function( topic, data ){
+         console.log("trigger: ", topic, data);
 	 	return publish( topic, data, false );
 	 };
 	/**
@@ -39,6 +40,7 @@
 	 *  @func (Function): The function to call when a new topic is published
 	 **/
 	 p.on = function( topic, func ){
+         console.log("on", topic);
 		// topic is not registered yet
 		if ( !topics.hasOwnProperty( topic ) ){
 			topics[topic] = [];
@@ -66,3 +68,5 @@
 	 	return false;
 	 };
 	}(Robin.Utils.PubSub));
+
+Robin.Utils.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
