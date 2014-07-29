@@ -218,7 +218,6 @@
             self.elementsList.headerTitle.html(Robin.Settings.popup.textOnline);
             self.elementsList.buttonPlus.appendTo(self.elementsList.headerTitle);
             self.elementsList.buttonChat.appendTo(self.elementsList.headerTitle);
-            //reload the iframe
     };
 
     self.setOffline = function(){

@@ -164,24 +164,29 @@ Robin.Utils.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
     Robin.on('robin.pop_over.found', function(popOver){
        popOver.hide();
     });
+
+    Robin.on('robin.convid.found', function (querys) {
+        function check() {
+            if (!self.open(querys.rbn_cnv)) {
+                setTimeout(function () {
+                    check();
+                }, 0.1);
+            }
+        }
+
+        check();
+    });
     self.robinTabClick = function(event){
         event.preventDefault();
         if($(this).css('bottom') === '0px'){
-            self.open();
+            self.open(null, null);
         }
         else{
             self.close();
         }
     };
 
-    self.open = function (event) {
-        if(event !== undefined){
-            event.stopPropagation();
-            if($(event.target).attr('id') === 'bubbleClose'){
-                self.closeBubble();
-                return;
-            }
-        }
+    self.open = function (conversation, rating) {
         if(self.robinFound){
             var width = (Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth) ? Robin.Settings.popup.openMinWith : Robin.Settings.popup.openMinWidth;
 
@@ -190,13 +195,17 @@ Robin.Utils.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
             elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
             elementsList.bubble.hide();
             Robin.Settings.tabOpened = true;
-            __robin.show(null, null, function () {
+            __robin.show(conversation, rating, function () {
                 var popOver = Robin.ButtonMaker.elementsList.popOver;
                 Robin.PopOver.restyle(popOver);
                 popOver.css({
                     bottom:0
                 });
             });
+            return true;
+        }
+        else{
+            return false;
         }
     };
 
@@ -443,7 +452,6 @@ Robin.Utils.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
             self.elementsList.headerTitle.html(Robin.Settings.popup.textOnline);
             self.elementsList.buttonPlus.appendTo(self.elementsList.headerTitle);
             self.elementsList.buttonChat.appendTo(self.elementsList.headerTitle);
-            //reload the iframe
     };
 
     self.setOffline = function(){
@@ -491,6 +499,11 @@ Robin.Utils.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
 		self.checkForRobin();
 		self.checkForPopOver();
         self.deleteRobinClose();
+        self.querys = self.getQueryStrings();
+        if(self.hasRobinConversationID()){
+            Robin.trigger('robin.convid.found', self.querys);
+        }
+
 		Robin.Settings.minWith = 325;
 		Robin.Settings.tabClosedBottom = 480;
 		Robin.Settings.animationDuration = 600;
@@ -540,6 +553,51 @@ Robin.Utils.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
             $(buttons).remove();
         }
     };
+
+    self.getQueryStrings = function () {
+        var queryStrings = {},
+            query = window.location.search.substring(1),
+            vars = query.split("&");
+
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if (typeof queryStrings[pair[0]] === "undefined") {
+                queryStrings[pair[0]] = pair[1];
+            }
+            else if (typeof queryStrings[pair[0]] === "string") {
+                var arr = [ queryStrings[pair[0]], pair[1] ];
+                queryStrings[pair[0]] = arr;
+            }
+            else {
+                queryStrings[pair[0]].push(pair[1]);
+            }
+        }
+        return queryStrings;
+    };
+
+    self.hasRobinConversationID = function(){
+        var value = sessionStorage.getItem('rbn_cnv');
+        if(typeof value === 'string'){
+            self.querys.rbn_cnv = value;
+            return true;
+        }
+        return self.urlHasRobinConversationID();
+    };
+
+    self.urlHasRobinConversationID = function(){
+        var querys = self.getQueryStrings();
+        if(typeof querys.rbn_cnv !== 'undefined'){
+            Robin.Utils.log('Found Robin query string');
+            sessionStorage.setItem('rbn_cnv', querys.rbn_cnv);
+            Robin.Utils.querys = querys;
+        }
+        else{
+            Robin.Utils.log('No robin query string found.');
+            return false;
+        }
+        return true;
+    };
+
 	return self;
 })(Robin.Core);
 

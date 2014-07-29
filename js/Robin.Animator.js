@@ -15,24 +15,29 @@
     Robin.on('robin.pop_over.found', function(popOver){
        popOver.hide();
     });
+
+    Robin.on('robin.convid.found', function (querys) {
+        function check() {
+            if (!self.open(querys.rbn_cnv)) {
+                setTimeout(function () {
+                    check();
+                }, 0.1);
+            }
+        }
+
+        check();
+    });
     self.robinTabClick = function(event){
         event.preventDefault();
         if($(this).css('bottom') === '0px'){
-            self.open();
+            self.open(null, null);
         }
         else{
             self.close();
         }
     };
 
-    self.open = function (event) {
-        if(event !== undefined){
-            event.stopPropagation();
-            if($(event.target).attr('id') === 'bubbleClose'){
-                self.closeBubble();
-                return;
-            }
-        }
+    self.open = function (conversation, rating) {
         if(self.robinFound){
             var width = (Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth) ? Robin.Settings.popup.openMinWith : Robin.Settings.popup.openMinWidth;
 
@@ -41,13 +46,17 @@
             elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
             elementsList.bubble.hide();
             Robin.Settings.tabOpened = true;
-            __robin.show(null, null, function () {
+            __robin.show(conversation, rating, function () {
                 var popOver = Robin.ButtonMaker.elementsList.popOver;
                 Robin.PopOver.restyle(popOver);
                 popOver.css({
                     bottom:0
                 });
             });
+            return true;
+        }
+        else{
+            return false;
         }
     };
 
