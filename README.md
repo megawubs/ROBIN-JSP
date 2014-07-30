@@ -1,37 +1,60 @@
 ROBIN-JSP
 =============
 
-Use **ROBIN-JSP** to set additional settings for the ROBIN tab on your site. [ROBIN](http://robinhq.com) is the all-in-one customer service solution. The ROBIN-JSP library is not officially supported (or developed) by ROBIN.
 
-## Installation
+Makes your robin button a pull-up chat window.
 
-Replace the ROBIN javascript on your site
-```html
-<script src="https://selfservice.robinhq.com/external/robin/123456.js" async="async"></script>
-```
-With the example code shown below (don't forget to edit the settings to match your preferred setup).
+## Setup
 
-## Example
+Add the following code to the bottom of your page (right before the closing `</body>` tag) and above the existing Robin script.
 
-Use the following code to always show the ROBIN tab on your site, except when a visitor uses a mobile device. The position of the contact tab is half way on the right side of your screen.
-```html
+```HTML
 <script type="text/javascript">
-var robin_JSP_settings = {
-  apikey      : '123456', // Set your API key (REQUIRED)
-  hideMobile  : true,     // Hide the ROBIN tab on mobile devices
-  hideOffline : false,    // Show the ROBIN tab even when you're offline
-  customTop   : '30%',     // Adjust the vertical position of the ROBIN tab
-  theme       : 'theme-name' //the theme for the tab, overwrites the customTop setting
-};
-</script>
-<script type="text/javascript" src="//raw.github.com/megawubs/ROBIN-JSP/master/js/robin-jsp.min.js" async="async"></script>
+        var robin_settings = {
+            baseUrl: "https://selfservice-acc.robinhq.com/",
+            openAnimation: function () {
+                Robin.Animator.open();
+            },
+            closeAnimation: function () {
+                Robin.Animator.close();
+            },
+            popup : {
+                buttonWidth: 250,
+                openWidth: 330,
+                bubbleText: 'need some help?'
+            }
+        }
+    </script>
 ```
 
-## Settings
+Next, upload the file `build/robin-jsp.min.js` to your preferred directory on your web server.
+After that, include it right after the script we just placed. Like so:
 
-  * `apikey` - your [ROBIN apikey](http://robinhq.com/support/obtain-api-key/) (REQUIRED).
-  * `hideMobile` - true/false, hide/show the ROBIN tab on mobile devices.
-  * `hideOffline` - true/false, hide/show the ROBIN tab when you're offline.
-  * `customTop` - adjust the vertical position of the ROBIN tab on your site (including '%' or 'px').
-  * `logging` - true/false, enable/disable logging in the browser console
-  * `theme` - choose the layout of your robin button, currently you can choose `ribbon`, `landscape` and `big-button`. This setting will overwrite customTop
+```HTML
+<script type="text/javascript" src="path/to/your/uploaded/robin-jsp.min.js"></script>
+```
+
+Afterwards, you should have something like this:
+
+```HTML
+<script type="text/javascript">
+        var robin_settings = {
+            baseUrl: "https://selfservice-acc.robinhq.com/",
+            openAnimation: function () {
+                Robin.Animator.open();
+            },
+            closeAnimation: function () {
+                Robin.Animator.close();
+            },
+            popup : {
+                buttonWidth: 250,
+                openWidth: 330,
+                bubbleText: 'need some help?'
+            }
+        }
+    </script>
+    <script type="text/javascript" src="path/to/your/uploaded/robin-jsp.min.js"></script>
+    <script src="https://selfservice.robinhq.com/external/robin/[yourapikey].js" async="async"></script>
+```
+
+You can find the location for the last script inside your ROBIN account by going to Settings -> Contact tab and copy/paste the script you see there.

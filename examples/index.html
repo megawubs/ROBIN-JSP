@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+</head>
+<body>
+    Hello World!
+
+    <script type="text/javascript">
+        var robin_settings = {
+            baseUrl: "https://selfservice-acc.robinhq.com/",
+            openAnimation: function () {
+                Robin.Animator.open();
+            },
+            closeAnimation: function () {
+                Robin.Animator.close();
+            },
+            popup : {
+                buttonWidth: 250,
+                openWidth: 330,
+                bubbleText: 'need some help?'
+            }
+        }
+    </script>
+    <script type="text/javascript" src="js/robin-jsp.js"></script>
+    <!--<script src="https://selfservice.robinhq.com/external/robin/[yourapikey].js" async="async"></script>-->
+</body>
+</html>
