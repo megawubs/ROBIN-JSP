@@ -3,7 +3,6 @@
 	var topics = {},
 	lastUid = -1,
     publish = function( topic , data){
-        console.log(topic);
 		if ( !topics.hasOwnProperty( topic ) ){
 			return false;
 		}

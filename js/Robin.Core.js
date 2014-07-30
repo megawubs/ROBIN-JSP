@@ -2,8 +2,9 @@
 	"use strict";
 
     self.init =  function(){
-
+        Robin.Utils.log('Initializing...');
         Robin.on('__robin.defined', function () {
+            Robin.Utils.log('Staring up');
             Robin.Utils.extend(Robin.Settings, robin_settings);
             Robin.ButtonMaker.make();
         });

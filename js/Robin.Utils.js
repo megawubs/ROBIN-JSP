@@ -11,8 +11,8 @@
     };
 
     self.log = function (message) {
-        if (Robin.Settings.logging) {
-            console.log(message);
+        if (Robin.Settings.logging === true) {
+            console.log("Robin: " + message);
         }
     };
 

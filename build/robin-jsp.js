@@ -20,7 +20,6 @@ Robin = {
 	var topics = {},
 	lastUid = -1,
     publish = function( topic , data){
-        console.log(topic);
 		if ( !topics.hasOwnProperty( topic ) ){
 			return false;
 		}
@@ -85,8 +84,8 @@ Robin = {
     };
 
     self.log = function (message) {
-        if (Robin.Settings.logging) {
-            console.log(message);
+        if (Robin.Settings.logging === true) {
+            console.log("Robin: " + message);
         }
     };
 
@@ -150,27 +149,30 @@ Robin = {
 
     closeBubble = function(event){
         event.stopPropagation();
-        Robin.Utils.log('closing bubble...');
+        Robin.Utils.log('Closing the bubble');
         elementsList.bubble.remove();
         Robin.Storage.setItem('rbn_bubble_show', 'no');
     };
 
     Robin.on('robin.button.made', function(elements){
+        Robin.Utils.log('Adding events to the button');
         elementsList = elements;
         elements.robinTab.click(robinTabClick);
         elements.bubbleCloser.click(closeBubble);
     });
 
     self.open = function () {
+        Robin.Utils.log('Opening the Robin window...');
         var popOver = $('#robin_popover');
         if (popOver.length === 0) {
-            console.log('retrying to openup...');
+            Robin.Utils.log('Failed, retrying...');
             __robin.open();
         }
         else {
             var width = (Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth) ? Robin.Settings.popup.openMinWith : Robin.Settings.popup.openMinWidth;
             //default robin script wants to open, but button isn't build yet, lets retry!
             if (typeof elementsList.robinTab === "undefined") {
+                Robin.Utils.log('Button is not made yet, setting up a listener for "robin.button.made"');
                 var id = Robin.on('robin.button.made', function () {
                     Robin.Animator.open();
                     Robin.off(id);
@@ -182,11 +184,13 @@ Robin = {
                 elementsList.bubble.hide();
                 Robin.Settings.tabOpened = true;
                 Robin.PopOver.show();
+                Robin.Utils.log('Robin window is opened!');
             }
         }
     };
 
     self.close = function () {
+        Robin.Utils.log('Closing the Robin window');
         elementsList.robinTab.css({bottom:0, width:Robin.Settings.popup.buttonWidth}, Robin.Settings.animationDuration)
             .promise().done(function(){
                 elementsList.bubble.fadeIn(Robin.Settings.animationDuration);
@@ -363,10 +367,8 @@ Robin = {
         return bubble.append(Robin.Settings.popup.bubbleText).click(self.openTab);
     };
 
-
     self.make = function(){
-        Robin.Utils.log('Loading popup');
-        console.log($('#robin_popover').length);
+        Robin.Utils.log('Making the button');
 		self.elementsList.robinTab = createRobinTab()
 		.appendTo('body');
 		self.elementsList.bubble = createBubble();
@@ -390,6 +392,7 @@ Robin = {
 		.appendTo(self.elementsList.header);
 
         Robin.trigger('robin.button.made', self.elementsList);
+        Robin.Utils.log('Done making the button');
 	};
 
     //act
@@ -443,8 +446,9 @@ Robin = {
 	"use strict";
 
     self.init =  function(){
-
+        Robin.Utils.log('Initializing...');
         Robin.on('__robin.defined', function () {
+            Robin.Utils.log('Staring up');
             Robin.Utils.extend(Robin.Settings, robin_settings);
             Robin.ButtonMaker.make();
         });

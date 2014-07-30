@@ -163,10 +163,8 @@
         return bubble.append(Robin.Settings.popup.bubbleText).click(self.openTab);
     };
 
-
     self.make = function(){
-        Robin.Utils.log('Loading popup');
-        console.log($('#robin_popover').length);
+        Robin.Utils.log('Making the button');
 		self.elementsList.robinTab = createRobinTab()
 		.appendTo('body');
 		self.elementsList.bubble = createBubble();
@@ -190,6 +188,7 @@
 		.appendTo(self.elementsList.header);
 
         Robin.trigger('robin.button.made', self.elementsList);
+        Robin.Utils.log('Done making the button');
 	};
 
     //act
