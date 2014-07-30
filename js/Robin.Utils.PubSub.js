@@ -3,6 +3,7 @@
 	var topics = {},
 	lastUid = -1;
 	var publish = function( topic , data){
+        console.log(topic);
 		if ( !topics.hasOwnProperty( topic ) ){
 			return false;
 		}
@@ -68,5 +69,3 @@
 	 	return false;
 	 };
 	}(Robin.Utils.PubSub));
-
-Robin.Utils.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!

@@ -2,6 +2,7 @@
 	"use strict";
 
     self.init =  function(){
+
         //check until __robin to becomes defined.
 		self.checkForRobin();
         //check until #robin_popover exists in DOM
@@ -14,7 +15,6 @@
 
         //start when __robin is defined.
         Robin.on('robin.found.robin.var', self.start);
-
 	};
 
     self.checkForRobin = function(){
@@ -29,7 +29,7 @@
     self.checkForPopOver = function(){
         var popOver = document.getElementById('robin_popover');
         if( popOver === null){
-            setTimeout(self.checkForPopOver, 0.1);
+            setTimeout(self.checkForPopOver, 0);
         }
         else{
             Robin.trigger('robin.pop_over.found', $(popOver));
@@ -39,7 +39,7 @@
     self.deleteRobinClose = function () {
         var buttons = document.getElementById('robin_close');
         if( buttons === null){
-            setTimeout(self.deleteRobinClose, 0.1);
+            setTimeout(self.deleteRobinClose, 0);
         }
         else{
             $(buttons).remove();
@@ -66,11 +66,17 @@
     };
 
     self.start = function(){
+        Robin.Utils.extend(Robin.Settings, robin_settings);
         Robin.ButtonMaker.make();
         Robin.Query.getQueryStrings();
         if(Robin.Query.hasRobinConversationID()){
             Robin.trigger('robin.rbn_cnv.found', Robin.Query.querys);
         }
+
+        Robin.on('robin.tab.opened', function (rbn_cnv) {
+           console.log(rbn_cnv);
+
+        });
     };
 
 	return self;

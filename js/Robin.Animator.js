@@ -21,7 +21,7 @@
             if (!self.open(querys.rbn_cnv)) {
                 setTimeout(function () {
                     check();
-                }, 0.1);
+                }, 0);
             }
         }
 
@@ -53,6 +53,7 @@
                     bottom:0
                 });
             });
+            Robin.trigger('robin.tab.opened', Robin.Storage.getItem('rbn_cnv'));
             return true;
         }
         else{

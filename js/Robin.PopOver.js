@@ -1,5 +1,7 @@
 (function(self){
 
+
+
     self.restyle = function (popOver) {
         popOver.attr('style', '');
         popOver.css({
@@ -13,5 +15,7 @@
             display: "block"
         });
     };
+
+    Robin.on('robin.pop_over.found', self.restyle);
 
 })(Robin.PopOver);

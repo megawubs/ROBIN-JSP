@@ -25,6 +25,10 @@
     };
 
     self.hasRobinConversationID = function(){
+        // check if url has id, return it
+
+        //check if rbn_st is 'new'
+
         var value = Robin.Storage.getItem('robin_cnv');
         if(typeof value === 'string'){
             self.querys.rbn_cnv = value;

@@ -18,6 +18,7 @@ gulp.task('js', function(){
 	return streamqueue({ objectMode: true },
 			gulp.src('js/Robin.js'),
 			gulp.src('js/Robin.Utils.PubSub.js'),
+            gulp.src('js/Robin.Utils.js'),
 			gulp.src('js/Robin.Storage.js'),
             gulp.src('js/Robin.Animator.js'),
 			gulp.src('js/Robin.ButtonMaker.js'),
