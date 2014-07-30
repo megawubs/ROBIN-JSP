@@ -1,8 +1,8 @@
 (function(p){
 	"use strict";
 	var topics = {},
-	lastUid = -1;
-	var publish = function( topic , data){
+	lastUid = -1,
+    publish = function( topic , data){
         console.log(topic);
 		if ( !topics.hasOwnProperty( topic ) ){
 			return false;
@@ -25,23 +25,12 @@
 		setTimeout( notify , 0 );
 		return true;
 	};
-	/**
-	 *  Publishes the topic, passing the data to it's subscribers
-	 *  @topic (String): The topic to publish
-	 *  @data: The data to pass to subscribers
-	 **/
+
 	 p.trigger = function( topic, data ){
-         console.log("trigger: ", topic, data);
 	 	return publish( topic, data, false );
 	 };
-	/**
-	 *  Subscribes the passed function to the passed topic. 
-	 *  Every returned token is unique and should be stored if you need to unsubscribe
-	 *  @topic (String): The topic to subscribe to
-	 *  @func (Function): The function to call when a new topic is published
-	 **/
+
 	 p.on = function( topic, func ){
-         console.log("on", topic);
 		// topic is not registered yet
 		if ( !topics.hasOwnProperty( topic ) ){
 			topics[topic] = [];
@@ -51,10 +40,7 @@
 		// return token for unsubscribing
 		return token;
 	};
-	/**
-	 *  Unsubscribes a specific subscriber from a specific topic using the unique token
-	 *  @token (String): The token of the function to unsubscribe
-	 **/
+
 	 p.off = function( token ){
 	 	for ( var m in topics ){
 	 		if ( topics.hasOwnProperty( m ) ){

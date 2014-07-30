@@ -3,49 +3,29 @@
 
     self.init =  function(){
 
+        Robin.on('__robin.defined', function () {
+            Robin.Utils.extend(Robin.Settings, robin_settings);
+            Robin.ButtonMaker.make();
+        });
+
         //check until __robin to becomes defined.
 		self.checkForRobin();
-//        //check until #robin_popover exists in DOM
-//		self.checkForPopOver();
-        //delete the #robin_close buttons
-        self.deleteRobinClose();
 
         //set default settings for this script
         self.setDefaultSettings();
 
-        //start when __robin is defined.
-        Robin.on('robin.found.robin.var', function () {
-            Robin.Utils.extend(Robin.Settings, robin_settings);
-            Robin.ButtonMaker.make();
-        });
+        //bubble related settings
+        if (!Robin.Storage.getItem('rbn_bubble_show')) {
+            Robin.Storage.setItem('rbn_bubble_show', 'yes');
+        }
 	};
 
     self.checkForRobin = function(){
         if(typeof __robin === 'undefined'){
-            setTimeout(self.checkForRobin, 0.1);
+            setTimeout(self.checkForRobin, 0);
         }
         else{
-            Robin.trigger('robin.found.robin.var', __robin);
-        }
-    };
-
-//    self.checkForPopOver = function(){
-//        var popOver = document.getElementById('robin_popover');
-//        if( popOver === null){
-//            setTimeout(self.checkForPopOver, 0);
-//        }
-//        else{
-//            Robin.trigger('robin.pop_over.found', $(popOver));
-//        }
-//    };
-
-    self.deleteRobinClose = function () {
-        var buttons = document.getElementById('robin_close');
-        if( buttons === null){
-            setTimeout(self.deleteRobinClose, 0);
-        }
-        else{
-            $(buttons).remove();
+            Robin.trigger('__robin.defined', __robin);
         }
     };
 

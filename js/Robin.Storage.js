@@ -16,7 +16,6 @@
 			}
 			return '';
 		};
-
 		self.setItem = function(name, value){
 			document.cookie = name + "=" + value + "; path=/";
 		};

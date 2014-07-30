@@ -38,7 +38,4 @@
         });
     };
 
-
-//    Robin.on('robin.pop_over.found', self.restyle);
-
 })(Robin.PopOver);
