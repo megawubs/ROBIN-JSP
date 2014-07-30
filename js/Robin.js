@@ -24,6 +24,7 @@ Robin = {
     Core: {},
     Storage: {},
     PopOver:{},
+    Query: {},
     Settings: {
         apikey: false,
         logging: false,

@@ -22,6 +22,7 @@ gulp.task('js', function(){
             gulp.src('js/Robin.Animator.js'),
 			gulp.src('js/Robin.ButtonMaker.js'),
             gulp.src('js/Robin.PopOver.js'),
+            gulp.src('js/Robin.Query.js'),
 			gulp.src('js/Robin.Core.js')
 		)
 	.pipe(concat('robin-jsp.js'))

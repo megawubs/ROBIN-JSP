@@ -20,12 +20,12 @@
 
     Robin.on('robin.found.robin.var', function(){
         self.onlineStatus = robin_settings.isOnline;
-        if(self.onlineStatus === true){
-            self.setOnline();
-        }
-        else{
-            self.setOffline();
-        }
+//        if(self.onlineStatus === true){
+//            self.setOnline();
+//        }
+//        else{
+//            self.setOffline();
+//        }
     });
 
 	self.make = function(){

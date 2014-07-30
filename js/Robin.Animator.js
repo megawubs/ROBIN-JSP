@@ -8,7 +8,7 @@
         elements.bubbleCloser.click(self.closeBubble);
     });
 
-    Robin.on('robin.found.robin.var', function (robin) {
+    Robin.on('robin.found.robin.var', function () {
         self.robinFound = true;
     });
 
@@ -16,7 +16,7 @@
        popOver.hide();
     });
 
-    Robin.on('robin.convid.found', function (querys) {
+    Robin.on('robin.rbn_cnv.found', function (querys) {
         function check() {
             if (!self.open(querys.rbn_cnv)) {
                 setTimeout(function () {

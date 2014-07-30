@@ -24,6 +24,7 @@ Robin = {
     Core: {},
     Storage: {},
     PopOver:{},
+    Query: {},
     Settings: {
         apikey: false,
         logging: false,
@@ -157,7 +158,7 @@ Robin.Utils.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
         elements.bubbleCloser.click(self.closeBubble);
     });
 
-    Robin.on('robin.found.robin.var', function (robin) {
+    Robin.on('robin.found.robin.var', function () {
         self.robinFound = true;
     });
 
@@ -165,7 +166,7 @@ Robin.Utils.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
        popOver.hide();
     });
 
-    Robin.on('robin.convid.found', function (querys) {
+    Robin.on('robin.rbn_cnv.found', function (querys) {
         function check() {
             if (!self.open(querys.rbn_cnv)) {
                 setTimeout(function () {
@@ -254,12 +255,12 @@ Robin.Utils.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
 
     Robin.on('robin.found.robin.var', function(){
         self.onlineStatus = robin_settings.isOnline;
-        if(self.onlineStatus === true){
-            self.setOnline();
-        }
-        else{
-            self.setOffline();
-        }
+//        if(self.onlineStatus === true){
+//            self.setOnline();
+//        }
+//        else{
+//            self.setOffline();
+//        }
     });
 
 	self.make = function(){
@@ -483,56 +484,86 @@ Robin.Utils.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
 
 })(Robin.PopOver);
 
+(function (self) {
+
+    self.querys = {};
+
+    self.getQueryStrings = function () {
+        var queryStrings = {},
+            query = window.location.search.substring(1),
+            vars = query.split("&");
+
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if (typeof queryStrings[pair[0]] === "undefined") {
+                queryStrings[pair[0]] = pair[1];
+            }
+            else if (typeof queryStrings[pair[0]] === "string") {
+                var arr = [ queryStrings[pair[0]], pair[1] ];
+                queryStrings[pair[0]] = arr;
+            }
+            else {
+                queryStrings[pair[0]].push(pair[1]);
+            }
+        }
+        self.querys = queryStrings;
+        return queryStrings;
+    };
+
+    self.hasRobinConversationID = function(){
+        var value = Robin.Storage.getItem('robin_cnv');
+        if(typeof value === 'string'){
+            self.querys.rbn_cnv = value;
+            return true;
+        }
+        return self.urlHasRobinConversationID();
+    };
+
+    self.urlHasRobinConversationID = function(){
+        var querys = self.getQueryStrings();
+        if(typeof querys.rbn_cnv !== 'undefined'){
+            Robin.Utils.log('Found Robin query string');
+            Robin.Storage.setItem('robin_cnv', querys.rbn_cnv);
+            Robin.Utils.querys = querys;
+        }
+        else{
+            Robin.Utils.log('No robin query string found.');
+            return false;
+        }
+        return true;
+    };
+
+    return self;
+
+})(Robin.Query);
+
 (function(self){
 	"use strict";
 
-	self.addEvent = function(element, event, action){
-		if(element.addEventListener){
-			element.addEventListener(event, action, false);
-		}
-		else if (element.attachEvent){
-			element.attachEvent(event, action, false);
-		}
-	};
-
-	self.init =  function(){
+    self.init =  function(){
+        //check until __robin to becomes defined.
 		self.checkForRobin();
+        //check until #robin_popover exists in DOM
 		self.checkForPopOver();
+        //delete the #robin_close buttons
         self.deleteRobinClose();
-        self.querys = self.getQueryStrings();
-        if(self.hasRobinConversationID()){
-            Robin.trigger('robin.convid.found', self.querys);
-        }
 
-		Robin.Settings.minWith = 325;
-		Robin.Settings.tabClosedBottom = 480;
-		Robin.Settings.animationDuration = 600;
-		Robin.Settings.tabOpened = false;
-		Robin.Settings.popup.buttonMinWidth = 220;
-		Robin.Settings.popup.openMinWidth = 330;
+        //set default settings for this script
+        self.setDefaultSettings();
 
-		if(Robin.Settings.popup.buttonWidth < Robin.Settings.popup.buttonMinWidth){
-            Robin.Utils.log('Your button width is to small, setting it to the minimum of ' + Robin.Settings.popup.buttonMinWidth);
-            Robin.Settings.popup.buttonWidth = Robin.Settings.popup.buttonMinWidth;
-        }
+        //start when __robin is defined.
+        Robin.on('robin.found.robin.var', self.start);
 
-        if(Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth){
-            Robin.Utils.log('Your open width is to small, setting it to the minimum of ' + Robin.Settings.popup.openMinWidth);
-            Robin.Settings.popup.openWidth = Robin.Settings.popup.openMinWidth;
-        }
-
-		Robin.ButtonMaker.make();
 	};
 
-	self.checkForRobin = function(){
-		if(typeof __robin === 'undefined'){
-			console.log('undefined');
-			setTimeout(self.checkForRobin, 0.1);
-		}
-		else{
-			Robin.trigger('robin.found.robin.var', __robin);
-		}
-	};
+    self.checkForRobin = function(){
+        if(typeof __robin === 'undefined'){
+            setTimeout(self.checkForRobin, 0.1);
+        }
+        else{
+            Robin.trigger('robin.found.robin.var', __robin);
+        }
+    };
 
     self.checkForPopOver = function(){
         var popOver = document.getElementById('robin_popover');
@@ -554,48 +585,31 @@ Robin.Utils.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
         }
     };
 
-    self.getQueryStrings = function () {
-        var queryStrings = {},
-            query = window.location.search.substring(1),
-            vars = query.split("&");
+    self.setDefaultSettings = function () {
+        Robin.Settings.minWith = 325;
+        Robin.Settings.tabClosedBottom = 480;
+        Robin.Settings.animationDuration = 600;
+        Robin.Settings.tabOpened = false;
+        Robin.Settings.popup.buttonMinWidth = 220;
+        Robin.Settings.popup.openMinWidth = 330;
 
-        for (var i=0;i<vars.length;i++) {
-            var pair = vars[i].split("=");
-            if (typeof queryStrings[pair[0]] === "undefined") {
-                queryStrings[pair[0]] = pair[1];
-            }
-            else if (typeof queryStrings[pair[0]] === "string") {
-                var arr = [ queryStrings[pair[0]], pair[1] ];
-                queryStrings[pair[0]] = arr;
-            }
-            else {
-                queryStrings[pair[0]].push(pair[1]);
-            }
+        if (Robin.Settings.popup.buttonWidth < Robin.Settings.popup.buttonMinWidth) {
+            Robin.Utils.log('Your button width is to small, setting it to the minimum of ' + Robin.Settings.popup.buttonMinWidth);
+            Robin.Settings.popup.buttonWidth = Robin.Settings.popup.buttonMinWidth;
         }
-        return queryStrings;
+
+        if (Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth) {
+            Robin.Utils.log('Your open width is to small, setting it to the minimum of ' + Robin.Settings.popup.openMinWidth);
+            Robin.Settings.popup.openWidth = Robin.Settings.popup.openMinWidth;
+        }
     };
 
-    self.hasRobinConversationID = function(){
-        var value = sessionStorage.getItem('rbn_cnv');
-        if(typeof value === 'string'){
-            self.querys.rbn_cnv = value;
-            return true;
+    self.start = function(){
+        Robin.ButtonMaker.make();
+        Robin.Query.getQueryStrings();
+        if(Robin.Query.hasRobinConversationID()){
+            Robin.trigger('robin.rbn_cnv.found', Robin.Query.querys);
         }
-        return self.urlHasRobinConversationID();
-    };
-
-    self.urlHasRobinConversationID = function(){
-        var querys = self.getQueryStrings();
-        if(typeof querys.rbn_cnv !== 'undefined'){
-            Robin.Utils.log('Found Robin query string');
-            sessionStorage.setItem('rbn_cnv', querys.rbn_cnv);
-            Robin.Utils.querys = querys;
-        }
-        else{
-            Robin.Utils.log('No robin query string found.');
-            return false;
-        }
-        return true;
     };
 
 	return self;
