@@ -8,71 +8,50 @@
         elements.bubbleCloser.click(self.closeBubble);
     });
 
-    Robin.on('robin.found.robin.var', function () {
-        self.robinFound = true;
-    });
-
-    Robin.on('robin.pop_over.found', function(popOver){
-       popOver.hide();
-    });
-
-    Robin.on('robin.rbn_cnv.found', function (querys) {
-        function check() {
-            if (!self.open(querys.rbn_cnv)) {
-                setTimeout(function () {
-                    check();
-                }, 0);
-            }
-        }
-
-        check();
-    });
     self.robinTabClick = function(event){
         event.preventDefault();
         if($(this).css('bottom') === '0px'){
-            self.open(null, null);
+            __robin.show();
         }
         else{
-            self.close();
+            __robin.hide();
         }
     };
 
     self.open = function (conversation, rating) {
-        if(self.robinFound){
-            var width = (Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth) ? Robin.Settings.popup.openMinWith : Robin.Settings.popup.openMinWidth;
+            var popOver = $('#robin_popover');
+            if(popOver.length === 0){
+                console.log('retrying to openup...');
+                __robin.open();
+            }
+            else{
+                var width = (Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth) ? Robin.Settings.popup.openMinWith : Robin.Settings.popup.openMinWidth;
+                if(typeof elementsList.robinTab === "undefined"){
+                    var id = Robin.on('robin.button.made', function () {
+                        Robin.Animator.open();
+                        Robin.off(id);
+                    });
+                }
+                else{
+                    elementsList.robinTab.css({bottom:Robin.Settings.tabClosedBottom, width:width});
 
-            elementsList.robinTab.css({bottom:Robin.Settings.tabClosedBottom, width:width});
+                    elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
+                    elementsList.bubble.hide();
+                    Robin.Settings.tabOpened = true;
+                    Robin.PopOver.show();
+                    Robin.trigger('robin.tab.opened');
+                }
+            }
 
-            elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
-            elementsList.bubble.hide();
-            Robin.Settings.tabOpened = true;
-            __robin.show(conversation, rating, function () {
-                var popOver = Robin.ButtonMaker.elementsList.popOver;
-                Robin.PopOver.restyle(popOver);
-                popOver.css({
-                    bottom:0
-                });
-            });
-            Robin.trigger('robin.tab.opened', Robin.Storage.getItem('rbn_cnv'));
-            return true;
-        }
-        else{
-            return false;
-        }
     };
 
     self.close = function () {
-        if(self.robinFound){
-            console.log(Robin.Settings.popup.buttonWidth);
-            elementsList.robinTab.css({bottom:0, width:Robin.Settings.popup.buttonWidth}, Robin.Settings.animationDuration)
-                .promise().done(function(){
-                    elementsList.bubble.fadeIn(Robin.Settings.animationDuration);
-                });
-            elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.up);
-            Robin.ButtonMaker.elementsList.popOver.css({
-                bottom:"-480px"
+        elementsList.robinTab.css({bottom:0, width:Robin.Settings.popup.buttonWidth}, Robin.Settings.animationDuration)
+            .promise().done(function(){
+                elementsList.bubble.fadeIn(Robin.Settings.animationDuration);
             });
-        }
+        elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.up);
+        Robin.PopOver.down();
     };
 
     self.closeBubble = function(event){

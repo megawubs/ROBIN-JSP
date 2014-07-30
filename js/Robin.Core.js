@@ -5,8 +5,8 @@
 
         //check until __robin to becomes defined.
 		self.checkForRobin();
-        //check until #robin_popover exists in DOM
-		self.checkForPopOver();
+//        //check until #robin_popover exists in DOM
+//		self.checkForPopOver();
         //delete the #robin_close buttons
         self.deleteRobinClose();
 
@@ -14,7 +14,10 @@
         self.setDefaultSettings();
 
         //start when __robin is defined.
-        Robin.on('robin.found.robin.var', self.start);
+        Robin.on('robin.found.robin.var', function () {
+            Robin.Utils.extend(Robin.Settings, robin_settings);
+            Robin.ButtonMaker.make();
+        });
 	};
 
     self.checkForRobin = function(){
@@ -26,15 +29,15 @@
         }
     };
 
-    self.checkForPopOver = function(){
-        var popOver = document.getElementById('robin_popover');
-        if( popOver === null){
-            setTimeout(self.checkForPopOver, 0);
-        }
-        else{
-            Robin.trigger('robin.pop_over.found', $(popOver));
-        }
-    };
+//    self.checkForPopOver = function(){
+//        var popOver = document.getElementById('robin_popover');
+//        if( popOver === null){
+//            setTimeout(self.checkForPopOver, 0);
+//        }
+//        else{
+//            Robin.trigger('robin.pop_over.found', $(popOver));
+//        }
+//    };
 
     self.deleteRobinClose = function () {
         var buttons = document.getElementById('robin_close');
@@ -63,20 +66,6 @@
             Robin.Utils.log('Your open width is to small, setting it to the minimum of ' + Robin.Settings.popup.openMinWidth);
             Robin.Settings.popup.openWidth = Robin.Settings.popup.openMinWidth;
         }
-    };
-
-    self.start = function(){
-        Robin.Utils.extend(Robin.Settings, robin_settings);
-        Robin.ButtonMaker.make();
-        Robin.Query.getQueryStrings();
-        if(Robin.Query.hasRobinConversationID()){
-            Robin.trigger('robin.rbn_cnv.found', Robin.Query.querys);
-        }
-
-        Robin.on('robin.tab.opened', function (rbn_cnv) {
-           console.log(rbn_cnv);
-
-        });
     };
 
 	return self;

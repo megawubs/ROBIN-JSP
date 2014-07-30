@@ -107,7 +107,7 @@
 	};
 
     self.getHeaderTitle = function() {
-        return (Robin.Settings.isOnline) ? Robin.Settings.popup.textOnline : Robin.Settings.popup.textOffline;
+        return (Robin.Settings.isOnline) ? Robin.Settings.onlineText : Robin.Settings.offlineText;
     };
 
     self.createHeaderTitle = function(){

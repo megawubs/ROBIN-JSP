@@ -16,7 +16,7 @@
         }
     };
 
-    self.extend(Robin.Settings, robin_JSP_settings);
+    self.extend(Robin.Settings, robin_settings);
     self.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
 })(Robin.Utils);
 

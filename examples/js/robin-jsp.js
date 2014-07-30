@@ -105,7 +105,7 @@ Robin = {
         }
     };
 
-    self.extend(Robin.Settings, robin_JSP_settings);
+    self.extend(Robin.Settings, robin_settings);
     self.extend(Robin, Robin.Utils.PubSub); //Give Robin pub/sub methods!
 })(Robin.Utils);
 
@@ -161,71 +161,50 @@ Robin = {
         elements.bubbleCloser.click(self.closeBubble);
     });
 
-    Robin.on('robin.found.robin.var', function () {
-        self.robinFound = true;
-    });
-
-    Robin.on('robin.pop_over.found', function(popOver){
-       popOver.hide();
-    });
-
-    Robin.on('robin.rbn_cnv.found', function (querys) {
-        function check() {
-            if (!self.open(querys.rbn_cnv)) {
-                setTimeout(function () {
-                    check();
-                }, 0);
-            }
-        }
-
-        check();
-    });
     self.robinTabClick = function(event){
         event.preventDefault();
         if($(this).css('bottom') === '0px'){
-            self.open(null, null);
+            __robin.show();
         }
         else{
-            self.close();
+            __robin.hide();
         }
     };
 
     self.open = function (conversation, rating) {
-        if(self.robinFound){
-            var width = (Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth) ? Robin.Settings.popup.openMinWith : Robin.Settings.popup.openMinWidth;
+            var popOver = $('#robin_popover');
+            if(popOver.length === 0){
+                console.log('retrying to openup...');
+                __robin.open();
+            }
+            else{
+                var width = (Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth) ? Robin.Settings.popup.openMinWith : Robin.Settings.popup.openMinWidth;
+                if(typeof elementsList.robinTab === "undefined"){
+                    var id = Robin.on('robin.button.made', function () {
+                        Robin.Animator.open();
+                        Robin.off(id);
+                    });
+                }
+                else{
+                    elementsList.robinTab.css({bottom:Robin.Settings.tabClosedBottom, width:width});
 
-            elementsList.robinTab.css({bottom:Robin.Settings.tabClosedBottom, width:width});
+                    elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
+                    elementsList.bubble.hide();
+                    Robin.Settings.tabOpened = true;
+                    Robin.PopOver.show();
+                    Robin.trigger('robin.tab.opened');
+                }
+            }
 
-            elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
-            elementsList.bubble.hide();
-            Robin.Settings.tabOpened = true;
-            __robin.show(conversation, rating, function () {
-                var popOver = Robin.ButtonMaker.elementsList.popOver;
-                Robin.PopOver.restyle(popOver);
-                popOver.css({
-                    bottom:0
-                });
-            });
-            Robin.trigger('robin.tab.opened', Robin.Storage.getItem('rbn_cnv'));
-            return true;
-        }
-        else{
-            return false;
-        }
     };
 
     self.close = function () {
-        if(self.robinFound){
-            console.log(Robin.Settings.popup.buttonWidth);
-            elementsList.robinTab.css({bottom:0, width:Robin.Settings.popup.buttonWidth}, Robin.Settings.animationDuration)
-                .promise().done(function(){
-                    elementsList.bubble.fadeIn(Robin.Settings.animationDuration);
-                });
-            elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.up);
-            Robin.ButtonMaker.elementsList.popOver.css({
-                bottom:"-480px"
+        elementsList.robinTab.css({bottom:0, width:Robin.Settings.popup.buttonWidth}, Robin.Settings.animationDuration)
+            .promise().done(function(){
+                elementsList.bubble.fadeIn(Robin.Settings.animationDuration);
             });
-        }
+        elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.up);
+        Robin.PopOver.down();
     };
 
     self.closeBubble = function(event){
@@ -346,7 +325,7 @@ Robin = {
 	};
 
     self.getHeaderTitle = function() {
-        return (Robin.Settings.isOnline) ? Robin.Settings.popup.textOnline : Robin.Settings.popup.textOffline;
+        return (Robin.Settings.isOnline) ? Robin.Settings.onlineText : Robin.Settings.offlineText;
     };
 
     self.createHeaderTitle = function(){
@@ -465,14 +444,23 @@ Robin = {
 })(Robin.ButtonMaker);
 (function(self){
 
+    var down = "-480px",
+        up = 0,
+        setStyle = function(style){
+            var popOver = $('#robin_popover');
+            popOver.css(style);
+        },
+        clearStyle = function () {
+            var popOver = $('#robin_popover');
+            popOver.attr('style', '');
+        };
 
-
-    self.restyle = function (popOver) {
-        popOver.attr('style', '');
-        popOver.css({
+    self.restyle = function () {
+        clearStyle();
+        setStyle({
             position: "fixed",
             right: "15px",
-            bottom: "-480px",
+            bottom: down,
             height: "479px",
             width: "331px",
             zIndex:" 999998",
@@ -481,7 +469,21 @@ Robin = {
         });
     };
 
-    Robin.on('robin.pop_over.found', self.restyle);
+    self.show = function () {
+        self.restyle();
+        setStyle({
+            bottom:up
+        });
+    };
+
+    self.down = function () {
+        setStyle({
+            bottom:down
+        });
+    };
+
+
+//    Robin.on('robin.pop_over.found', self.restyle);
 
 })(Robin.PopOver);
 
@@ -549,8 +551,8 @@ Robin = {
 
         //check until __robin to becomes defined.
 		self.checkForRobin();
-        //check until #robin_popover exists in DOM
-		self.checkForPopOver();
+//        //check until #robin_popover exists in DOM
+//		self.checkForPopOver();
         //delete the #robin_close buttons
         self.deleteRobinClose();
 
@@ -558,7 +560,10 @@ Robin = {
         self.setDefaultSettings();
 
         //start when __robin is defined.
-        Robin.on('robin.found.robin.var', self.start);
+        Robin.on('robin.found.robin.var', function () {
+            Robin.Utils.extend(Robin.Settings, robin_settings);
+            Robin.ButtonMaker.make();
+        });
 	};
 
     self.checkForRobin = function(){
@@ -570,15 +575,15 @@ Robin = {
         }
     };
 
-    self.checkForPopOver = function(){
-        var popOver = document.getElementById('robin_popover');
-        if( popOver === null){
-            setTimeout(self.checkForPopOver, 0);
-        }
-        else{
-            Robin.trigger('robin.pop_over.found', $(popOver));
-        }
-    };
+//    self.checkForPopOver = function(){
+//        var popOver = document.getElementById('robin_popover');
+//        if( popOver === null){
+//            setTimeout(self.checkForPopOver, 0);
+//        }
+//        else{
+//            Robin.trigger('robin.pop_over.found', $(popOver));
+//        }
+//    };
 
     self.deleteRobinClose = function () {
         var buttons = document.getElementById('robin_close');
@@ -607,20 +612,6 @@ Robin = {
             Robin.Utils.log('Your open width is to small, setting it to the minimum of ' + Robin.Settings.popup.openMinWidth);
             Robin.Settings.popup.openWidth = Robin.Settings.popup.openMinWidth;
         }
-    };
-
-    self.start = function(){
-        Robin.Utils.extend(Robin.Settings, robin_settings);
-        Robin.ButtonMaker.make();
-        Robin.Query.getQueryStrings();
-        if(Robin.Query.hasRobinConversationID()){
-            Robin.trigger('robin.rbn_cnv.found', Robin.Query.querys);
-        }
-
-        Robin.on('robin.tab.opened', function (rbn_cnv) {
-           console.log(rbn_cnv);
-
-        });
     };
 
 	return self;
