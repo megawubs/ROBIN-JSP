@@ -159,6 +159,7 @@ Robin = {
         elementsList = elements;
         elements.robinTab.click(robinTabClick);
         elements.bubbleCloser.click(closeBubble);
+        elements.bubble.click(self.open);
     });
 
     self.open = function () {
