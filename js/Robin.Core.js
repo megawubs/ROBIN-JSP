@@ -32,7 +32,7 @@
 
     self.setDefaultSettings = function () {
         Robin.Settings.minWith = 325;
-        Robin.Settings.tabClosedBottom = 480;
+        Robin.Settings.tabOpenedBottom = 479;
         Robin.Settings.animationDuration = 600;
         Robin.Settings.tabOpened = false;
         Robin.Settings.popup.buttonMinWidth = 220;

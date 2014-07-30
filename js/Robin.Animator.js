@@ -38,12 +38,12 @@
             if (typeof elementsList.robinTab === "undefined") {
                 Robin.Utils.log('Button is not made yet, setting up a listener for "robin.button.made"');
                 var id = Robin.on('robin.button.made', function () {
-                    Robin.Animator.open();
+                    self.open();
                     Robin.off(id);
                 });
             }
             else {
-                elementsList.robinTab.css({bottom: Robin.Settings.tabClosedBottom, width: width});
+                elementsList.robinTab.css({bottom: Robin.Settings.tabOpenedBottom, width: width});
                 elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
                 elementsList.bubble.hide();
                 Robin.Settings.tabOpened = true;

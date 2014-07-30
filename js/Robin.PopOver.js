@@ -15,10 +15,10 @@
         clearStyle();
         setStyle({
             position: "fixed",
-            right: "15px",
+            right: "16px",
             bottom: down,
             height: "479px",
-            width: "331px",
+            width: "330px",
             zIndex:" 999998",
             boxShadow: "rgba(50, 50, 50, 0.498039) 0px 0px 10px",
             display: "block"

@@ -57,4 +57,3 @@ Afterwards, you should have something like this:
 ```
 
 You can find the location for the last script inside your ROBIN account by going to Settings -> Contact tab and copy/paste the script you see there.
->>>>>>> review

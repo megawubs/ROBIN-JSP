@@ -174,12 +174,12 @@ Robin = {
             if (typeof elementsList.robinTab === "undefined") {
                 Robin.Utils.log('Button is not made yet, setting up a listener for "robin.button.made"');
                 var id = Robin.on('robin.button.made', function () {
-                    Robin.Animator.open();
+                    self.open();
                     Robin.off(id);
                 });
             }
             else {
-                elementsList.robinTab.css({bottom: Robin.Settings.tabClosedBottom, width: width});
+                elementsList.robinTab.css({bottom: Robin.Settings.tabOpenedBottom, width: width});
                 elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
                 elementsList.bubble.hide();
                 Robin.Settings.tabOpened = true;
@@ -417,10 +417,10 @@ Robin = {
         clearStyle();
         setStyle({
             position: "fixed",
-            right: "15px",
+            right: "16px",
             bottom: down,
             height: "479px",
-            width: "331px",
+            width: "330px",
             zIndex:" 999998",
             boxShadow: "rgba(50, 50, 50, 0.498039) 0px 0px 10px",
             display: "block"
@@ -476,7 +476,7 @@ Robin = {
 
     self.setDefaultSettings = function () {
         Robin.Settings.minWith = 325;
-        Robin.Settings.tabClosedBottom = 480;
+        Robin.Settings.tabOpenedBottom = 479;
         Robin.Settings.animationDuration = 600;
         Robin.Settings.tabOpened = false;
         Robin.Settings.popup.buttonMinWidth = 220;
