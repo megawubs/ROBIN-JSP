@@ -169,7 +169,10 @@ Robin = {
             __robin.open();
         }
         else {
-            var width = (Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth) ? Robin.Settings.popup.openMinWith : Robin.Settings.popup.openMinWidth;
+            var width = (Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth)
+                ? Robin.Settings.popup.openMinWith
+                : Robin.Settings.popup.openWidth;
+            
             //default robin script wants to open, but button isn't build yet, lets retry!
             if (typeof elementsList.robinTab === "undefined") {
                 Robin.Utils.log('Button is not made yet, setting up a listener for "robin.button.made"');
@@ -417,10 +420,10 @@ Robin = {
         clearStyle();
         setStyle({
             position: "fixed",
-            right: "16px",
+            right: "15px",
             bottom: down,
             height: "479px",
-            width: "330px",
+            width: Robin.ButtonMaker.elementsList.robinTab.width() + "px",
             zIndex:" 999998",
             boxShadow: "rgba(50, 50, 50, 0.498039) 0px 0px 10px",
             display: "block"
