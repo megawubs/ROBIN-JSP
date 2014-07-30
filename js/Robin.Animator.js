@@ -33,10 +33,8 @@
             __robin.open();
         }
         else {
-            var width = (Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth)
-                ? Robin.Settings.popup.openMinWith
-                : Robin.Settings.popup.openWidth;
-            
+            var width = (Robin.Settings.popup.openWidth < Robin.Settings.popup.openMinWidth) ? Robin.Settings.popup.openMinWith : Robin.Settings.popup.openWidth;
+
             //default robin script wants to open, but button isn't build yet, lets retry!
             if (typeof elementsList.robinTab === "undefined") {
                 Robin.Utils.log('Button is not made yet, setting up a listener for "robin.button.made"');
