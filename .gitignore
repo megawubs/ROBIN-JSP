@@ -40,3 +40,5 @@ Thumbs.db
 #########################################
 test/
 node_modules/
+examples/triangl.html
+examples/Triangl*
