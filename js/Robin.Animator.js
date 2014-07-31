@@ -50,7 +50,6 @@
                 elementsList.bubble.hide();
                 Robin.Settings.tabOpened = true;
                 Robin.PopOver.show();
-                Robin.PopOver.setListener();
                 Robin.Utils.log('Robin window is opened!');
 
             }

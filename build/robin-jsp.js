@@ -186,7 +186,6 @@ Robin = {
                 elementsList.bubble.hide();
                 Robin.Settings.tabOpened = true;
                 Robin.PopOver.show();
-                Robin.PopOver.setListener();
                 Robin.Utils.log('Robin window is opened!');
 
             }
@@ -455,14 +454,6 @@ Robin = {
     self.down = function () {
         setStyle({
             bottom:down
-        });
-    };
-
-    self.setListener = function () {
-        var popOver = $('#robin_popover');
-
-        popOver.hover(function () {
-            console.log('hello world!');
         });
     };
 
