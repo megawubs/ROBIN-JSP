@@ -18,7 +18,7 @@
             right: "15px",
             bottom: down,
             height: "479px",
-            width: Robin.ButtonMaker.elementsList.robinTab.width() + "px",
+            width: Robin.ButtonMaker.elementsList.robinTab.width() + 1 + "px",
             zIndex:" 999998",
             boxShadow: "rgba(50, 50, 50, 0.498039) 0px 0px 10px",
             display: "block"
