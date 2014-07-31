@@ -477,8 +477,9 @@ Robin = {
             Robin.Utils.log('Staring up');
             Robin.Utils.extend(Robin.Settings, robin_settings);
             Robin.ButtonMaker.make();
+
+            Robin.Utils.log('Starting loop');
             self.startLoop(function () {
-                Robin.Utils.log('Starting loop');
                self.isOnline().done(function (response) {
                    if(response.Data.Status === 'online') {
                        if(Robin.Settings.isOnline === false){
@@ -546,7 +547,6 @@ Robin = {
     };
 
     self.api = function(service) {
-//        if(typeof )
         var url = Robin.Settings.baseUrl +'/' + service;
         Robin.Utils.log('API: Requesting: ' + url);
         return $.get(url);
@@ -562,7 +562,5 @@ Robin = {
 
 	return self;
 })(Robin.Core);
-
-
 
 Robin.Core.init();
