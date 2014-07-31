@@ -38,4 +38,12 @@
         });
     };
 
+    self.setListener = function () {
+        var popOver = $('#robin_popover');
+
+        popOver.hover(function () {
+            console.log('hello world!');
+        });
+    };
+
 })(Robin.PopOver);

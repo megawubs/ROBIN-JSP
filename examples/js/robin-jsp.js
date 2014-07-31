@@ -186,7 +186,9 @@ Robin = {
                 elementsList.bubble.hide();
                 Robin.Settings.tabOpened = true;
                 Robin.PopOver.show();
+                Robin.PopOver.setListener();
                 Robin.Utils.log('Robin window is opened!');
+
             }
         }
     };
@@ -200,6 +202,20 @@ Robin = {
 
         elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.up);
         Robin.PopOver.down();
+    };
+
+    self.setOnline = function(){
+        Robin.Utils.log("Setting widget to online state");
+        //update styling
+        elementsList.headerTitle.html(Robin.Settings.onlineText);
+        elementsList.buttonPlus.appendTo(elementsList.headerTitle);
+        elementsList.buttonChat.appendTo(elementsList.headerTitle);
+    };
+
+    self.setOffline = function () {
+        elementsList.headerTitle.html(Robin.Settings.offlineText);
+        elementsList.buttonPlus.appendTo(elementsList.headerTitle);
+        elementsList.buttonChat.appendTo(elementsList.headerTitle);
     };
 
 })(Robin.Animator);
@@ -442,6 +458,14 @@ Robin = {
         });
     };
 
+    self.setListener = function () {
+        var popOver = $('#robin_popover');
+
+        popOver.hover(function () {
+            console.log('hello world!');
+        });
+    };
+
 })(Robin.PopOver);
 
 (function(self){
@@ -453,9 +477,26 @@ Robin = {
             Robin.Utils.log('Staring up');
             Robin.Utils.extend(Robin.Settings, robin_settings);
             Robin.ButtonMaker.make();
+            self.startLoop(function () {
+                Robin.Utils.log('Starting loop');
+               self.isOnline().done(function (response) {
+                   if(response.Data.Status === 'online') {
+                       if(Robin.Settings.isOnline === false){
+                           Robin.Animator.setOnline();
+                           Robin.Settings.isOnline = true;
+                       }
+                   }
+                   else{
+                       if(Robin.Settings.isOnline === true){
+                           Robin.Animator.setOffline();
+                           Robin.Settings.isOnline = false;
+                       }
+                   }
+               });
+            });
         });
 
-        //check until __robin to becomes defined.
+        //check until __robin becomes defined.
 		self.checkForRobin();
 
         //set default settings for this script
@@ -493,6 +534,30 @@ Robin = {
             Robin.Utils.log('Your open width is to small, setting it to the minimum of ' + Robin.Settings.popup.openMinWidth);
             Robin.Settings.popup.openWidth = Robin.Settings.popup.openMinWidth;
         }
+    };
+    self.isOnline = function() {
+        var check = false;
+        return self.api('presence/'+Robin.Settings.apikey+'/getstatus')
+            .done(function(response) {
+                if(response.Data.Status === 'online') {
+                    check = true;
+                }
+            });
+    };
+
+    self.api = function(service) {
+//        if(typeof )
+        var url = Robin.Settings.baseUrl +'/' + service;
+        Robin.Utils.log('API: Requesting: ' + url);
+        return $.get(url);
+    };
+
+    self.startLoop = function(loop){
+        var repeat = function(){
+            loop();
+            setTimeout(repeat, 18000);
+        };
+        repeat();
     };
 
 	return self;

@@ -50,7 +50,9 @@
                 elementsList.bubble.hide();
                 Robin.Settings.tabOpened = true;
                 Robin.PopOver.show();
+                Robin.PopOver.setListener();
                 Robin.Utils.log('Robin window is opened!');
+
             }
         }
     };
@@ -64,6 +66,20 @@
 
         elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.up);
         Robin.PopOver.down();
+    };
+
+    self.setOnline = function(){
+        Robin.Utils.log("Setting widget to online state");
+        //update styling
+        elementsList.headerTitle.html(Robin.Settings.onlineText);
+        elementsList.buttonPlus.appendTo(elementsList.headerTitle);
+        elementsList.buttonChat.appendTo(elementsList.headerTitle);
+    };
+
+    self.setOffline = function () {
+        elementsList.headerTitle.html(Robin.Settings.offlineText);
+        elementsList.buttonPlus.appendTo(elementsList.headerTitle);
+        elementsList.buttonChat.appendTo(elementsList.headerTitle);
     };
 
 })(Robin.Animator);
