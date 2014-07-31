@@ -23,7 +23,7 @@
         elementsList = elements;
         elements.robinTab.click(robinTabClick);
         elements.bubbleCloser.click(closeBubble);
-        elements.bubble.click(self.open);
+        elements.bubble.click(__robin.show);
     });
 
     self.open = function () {
