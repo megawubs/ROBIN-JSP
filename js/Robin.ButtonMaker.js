@@ -102,7 +102,7 @@
 
     createButtonUp = function(){
         var el = (Robin.Settings.useDefaultImages)  ?  $('<img/>').attr('src', self.buttons.up) : $('<div/>');
-        return el.attr('id', 'arrowImage').css({
+        return el.attr('id', 'arrowImageUp').css({
             position:'relative',
             top:-18,
             cssFloat:'right',

@@ -46,7 +46,13 @@
             }
             else {
                 elementsList.robinTab.css({bottom: Robin.Settings.tabOpenedBottom, width: width});
-                //elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
+                if(Robin.Settings.useDefaultImages){
+                    elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
+                }
+                else{
+                    elementsList.buttonUp.attr('id', "arrowImageDown");
+                }
+
                 elementsList.bubble.hide();
                 Robin.Settings.tabOpened = true;
                 Robin.PopOver.show();
@@ -63,7 +69,12 @@
                 elementsList.bubble.fadeIn(Robin.Settings.animationDuration);
             });
 
-        //elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.up);
+        if(Robin.Settings.useDefaultImages){
+            elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.up);
+        }
+        else{
+            elementsList.buttonUp.attr('id', "arrowImageUp");
+        }
         Robin.PopOver.down();
     };
 
