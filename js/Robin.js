@@ -12,6 +12,8 @@ Robin = {
     Settings: {
         apikey: false,
         logging: false,
-        popup: {}
+        popup: {},
+        displayBubble:true,
+        useDefaultImages:true
     }
 };

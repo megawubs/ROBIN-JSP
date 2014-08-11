@@ -1,6 +1,7 @@
 (function(self){
 	"use strict";
 
+
     self.init =  function(){
         Robin.Utils.log('Initializing...');
         Robin.on('__robin.defined', function () {
@@ -34,9 +35,7 @@
         self.setDefaultSettings();
 
         //bubble related settings
-        if (!Robin.Storage.getItem('rbn_bubble_show')) {
-            Robin.Storage.setItem('rbn_bubble_show', 'yes');
-        }
+        self.initBubble();
 	};
 
     self.checkForRobin = function(){
@@ -88,6 +87,16 @@
             setTimeout(repeat, 18000);
         };
         repeat();
+    };
+
+    self.initBubble = function () {
+        if (Robin.Settings.displayBubble) {
+            var value = (Robin.Settings.displayBubble === true) ? 'no' : 'yes'; //for when they switch to false
+            if (!Robin.Storage.getItem('rbn_bubble_show')) {
+                value = 'yes';
+            }
+            Robin.Storage.setItem('rbn_bubble_show', value);
+        }
     };
 
 	return self;

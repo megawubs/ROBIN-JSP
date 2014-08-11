@@ -46,7 +46,7 @@
             }
             else {
                 elementsList.robinTab.css({bottom: Robin.Settings.tabOpenedBottom, width: width});
-                elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
+                //elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
                 elementsList.bubble.hide();
                 Robin.Settings.tabOpened = true;
                 Robin.PopOver.show();
@@ -63,7 +63,7 @@
                 elementsList.bubble.fadeIn(Robin.Settings.animationDuration);
             });
 
-        elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.up);
+        //elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.up);
         Robin.PopOver.down();
     };
 

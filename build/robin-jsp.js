@@ -12,7 +12,9 @@ Robin = {
     Settings: {
         apikey: false,
         logging: false,
-        popup: {}
+        popup: {},
+        displayBubble:true,
+        useDefaultImages:true
     }
 };
 (function(p){
@@ -182,7 +184,7 @@ Robin = {
             }
             else {
                 elementsList.robinTab.css({bottom: Robin.Settings.tabOpenedBottom, width: width});
-                elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
+                //elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.down);
                 elementsList.bubble.hide();
                 Robin.Settings.tabOpened = true;
                 Robin.PopOver.show();
@@ -199,7 +201,7 @@ Robin = {
                 elementsList.bubble.fadeIn(Robin.Settings.animationDuration);
             });
 
-        elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.up);
+        //elementsList.buttonUp.attr('src', Robin.ButtonMaker.buttons.up);
         Robin.PopOver.down();
     };
 
@@ -302,34 +304,33 @@ Robin = {
     },
 
     createButtonPlus = function(){
-        return $('<img/>')
-            .attr('src', self.buttons.plus)
-            .css({
-                cssFloat:'left',
-                paddingRight: 10,
-                position:'relative',
-                top:3
-            });
+        var el = (Robin.Settings.useDefaultImages)  ?  $('<img/>').attr('src', self.buttons.plus) : $('<div/>');
+
+        return el.attr('id', 'beforeTextImage').css({
+            cssFloat:'left',
+            paddingRight: 10,
+            position:'relative',
+            top:3
+        });
     },
 
     createButtonChat = function(){
-        return $('<img/>')
-            .attr('src', self.buttons.chat)
-            .css({
-                paddingLeft:10,
-                width:25
-            });
+        var el = (Robin.Settings.useDefaultImages)  ?  $('<img/>').attr('src', self.buttons.chat) : $('<div/>');
+
+        return el.attr('id', "afterTextImage").css({
+            paddingLeft:10,
+            width:25
+        });
     },
 
     createButtonUp = function(){
-        return $('<img/>')
-            .attr('src', self.buttons.up)
-            .css({
-                position:'relative',
-                top:-18,
-                cssFloat:'right',
-                width:15
-            });
+        var el = (Robin.Settings.useDefaultImages)  ?  $('<img/>').attr('src', self.buttons.up) : $('<div/>');
+        return el.attr('id', 'arrowImage').css({
+            position:'relative',
+            top:-18,
+            cssFloat:'right',
+            width:15
+        });
     },
 
     createBubble = function(){
@@ -462,6 +463,7 @@ Robin = {
 (function(self){
 	"use strict";
 
+
     self.init =  function(){
         Robin.Utils.log('Initializing...');
         Robin.on('__robin.defined', function () {
@@ -495,9 +497,7 @@ Robin = {
         self.setDefaultSettings();
 
         //bubble related settings
-        if (!Robin.Storage.getItem('rbn_bubble_show')) {
-            Robin.Storage.setItem('rbn_bubble_show', 'yes');
-        }
+        self.initBubble();
 	};
 
     self.checkForRobin = function(){
@@ -549,6 +549,16 @@ Robin = {
             setTimeout(repeat, 18000);
         };
         repeat();
+    };
+
+    self.initBubble = function () {
+        if (Robin.Settings.displayBubble) {
+            var value = (Robin.Settings.displayBubble === true) ? 'no' : 'yes'; //for when they switch to false
+            if (!Robin.Storage.getItem('rbn_bubble_show')) {
+                value = 'yes';
+            }
+            Robin.Storage.setItem('rbn_bubble_show', value);
+        }
     };
 
 	return self;

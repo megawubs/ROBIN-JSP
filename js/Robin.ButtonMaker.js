@@ -81,34 +81,33 @@
     },
 
     createButtonPlus = function(){
-        return $('<img/>')
-            .attr('src', self.buttons.plus)
-            .css({
-                cssFloat:'left',
-                paddingRight: 10,
-                position:'relative',
-                top:3
-            });
+        var el = (Robin.Settings.useDefaultImages)  ?  $('<img/>').attr('src', self.buttons.plus) : $('<div/>');
+
+        return el.attr('id', 'beforeTextImage').css({
+            cssFloat:'left',
+            paddingRight: 10,
+            position:'relative',
+            top:3
+        });
     },
 
     createButtonChat = function(){
-        return $('<img/>')
-            .attr('src', self.buttons.chat)
-            .css({
-                paddingLeft:10,
-                width:25
-            });
+        var el = (Robin.Settings.useDefaultImages)  ?  $('<img/>').attr('src', self.buttons.chat) : $('<div/>');
+
+        return el.attr('id', "afterTextImage").css({
+            paddingLeft:10,
+            width:25
+        });
     },
 
     createButtonUp = function(){
-        return $('<img/>')
-            .attr('src', self.buttons.up)
-            .css({
-                position:'relative',
-                top:-18,
-                cssFloat:'right',
-                width:15
-            });
+        var el = (Robin.Settings.useDefaultImages)  ?  $('<img/>').attr('src', self.buttons.up) : $('<div/>');
+        return el.attr('id', 'arrowImage').css({
+            position:'relative',
+            top:-18,
+            cssFloat:'right',
+            width:15
+        });
     },
 
     createBubble = function(){
